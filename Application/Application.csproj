@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Device.GrpcClient" Version="8.0.48" />
+    <PackageReference Include="MelbergFramework.Application" Version="8.0.8" />
+    <PackageReference Include="MelbergFramework.Infrastructure.InfluxDB" Version="8.0.2" />
+    <PackageReference Include="MelbergFramework.Infrastructure.Rabbit" Version="8.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\DomainService\DomainService.csproj" />
+  </ItemGroup>
+
+</Project>
