@@ -10,3 +10,9 @@
 /home/jbmelberg/Git/Herder/DomainService/obj/Debug/net8.0/refint/DomainService.dll
 /home/jbmelberg/Git/Herder/DomainService/obj/Debug/net8.0/DomainService.pdb
 /home/jbmelberg/Git/Herder/DomainService/obj/Debug/net8.0/ref/DomainService.dll
+/home/jbmelberg/Git/Herder/DomainService/bin/Debug/net8.0/Domain.dll
+/home/jbmelberg/Git/Herder/DomainService/bin/Debug/net8.0/Infrastructure.Redis.dll
+/home/jbmelberg/Git/Herder/DomainService/bin/Debug/net8.0/Domain.pdb
+/home/jbmelberg/Git/Herder/DomainService/bin/Debug/net8.0/Infrastructure.Redis.pdb
+/home/jbmelberg/Git/Herder/DomainService/obj/Debug/net8.0/DomainService.csproj.AssemblyReference.cache
+/home/jbmelberg/Git/Herder/DomainService/obj/Debug/net8.0/DomainService.csproj.CopyComplete

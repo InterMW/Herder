@@ -61,3 +61,10 @@
 /home/jbmelberg/Git/Herder/Application/bin/Debug/net8.0/Grpc.Net.ClientFactory.dll
 /home/jbmelberg/Git/Herder/Application/bin/Debug/net8.0/Grpc.Net.Common.dll
 /home/jbmelberg/Git/Herder/Application/bin/Debug/net8.0/Grpc.StatusProto.dll
+/home/jbmelberg/Git/Herder/Application/bin/Debug/net8.0/MelbergFramework.Infrastructure.Redis.dll
+/home/jbmelberg/Git/Herder/Application/bin/Debug/net8.0/Pipelines.Sockets.Unofficial.dll
+/home/jbmelberg/Git/Herder/Application/bin/Debug/net8.0/StackExchange.Redis.dll
+/home/jbmelberg/Git/Herder/Application/bin/Debug/net8.0/System.Diagnostics.PerformanceCounter.dll
+/home/jbmelberg/Git/Herder/Application/bin/Debug/net8.0/runtimes/win/lib/netcoreapp2.0/System.Diagnostics.PerformanceCounter.dll
+/home/jbmelberg/Git/Herder/Application/bin/Debug/net8.0/Infrastructure.Redis.dll
+/home/jbmelberg/Git/Herder/Application/bin/Debug/net8.0/Infrastructure.Redis.pdb

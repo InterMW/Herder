@@ -31,6 +31,12 @@
               },
               "/home/jbmelberg/Git/Herder/DomainService/DomainService.csproj": {
                 "projectPath": "/home/jbmelberg/Git/Herder/DomainService/DomainService.csproj"
+              },
+              "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj": {
+                "projectPath": "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj"
+              },
+              "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj": {
+                "projectPath": "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj"
               }
             }
           }
@@ -51,7 +57,7 @@
             },
             "MelbergFramework.Application": {
               "target": "Package",
-              "version": "[8.0.8, )"
+              "version": "[8.0.10, )"
             },
             "MelbergFramework.Infrastructure.InfluxDB": {
               "target": "Package",
@@ -59,7 +65,7 @@
             },
             "MelbergFramework.Infrastructure.Rabbit": {
               "target": "Package",
-              "version": "[8.0.14, )"
+              "version": "[8.0.15, )"
             }
           },
           "imports": [
@@ -156,7 +162,17 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "/home/jbmelberg/Git/Herder/Domain/Domain.csproj": {
+                "projectPath": "/home/jbmelberg/Git/Herder/Domain/Domain.csproj"
+              },
+              "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj": {
+                "projectPath": "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj"
+              },
+              "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj": {
+                "projectPath": "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -168,6 +184,132 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.121/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj",
+        "projectName": "Infrastructure.Rabbit",
+        "projectPath": "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj",
+        "packagesPath": "/home/jbmelberg/.nuget/packages/",
+        "outputPath": "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/jbmelberg/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/jbmelberg/Git/Herder/Domain/Domain.csproj": {
+                "projectPath": "/home/jbmelberg/Git/Herder/Domain/Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "MelbergFramework.Infrastructure.Rabbit": {
+              "target": "Package",
+              "version": "[8.0.15, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.121/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj",
+        "projectName": "Infrastructure.Redis",
+        "projectPath": "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj",
+        "packagesPath": "/home/jbmelberg/.nuget/packages/",
+        "outputPath": "/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/jbmelberg/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/jbmelberg/Git/Herder/Domain/Domain.csproj": {
+                "projectPath": "/home/jbmelberg/Git/Herder/Domain/Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "MelbergFramework.Infrastructure.Redis": {
+              "target": "Package",
+              "version": "[8.0.15, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

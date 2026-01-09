@@ -1,4 +1,4 @@
-﻿namespace Domain;
+﻿namespace Tests;
 
 public class Class1
 {

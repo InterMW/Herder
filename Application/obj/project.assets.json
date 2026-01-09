@@ -280,10 +280,10 @@
           "lib/netstandard2.0/JsonSubTypes.dll": {}
         }
       },
-      "MelbergFramework.Application/8.0.8": {
+      "MelbergFramework.Application/8.0.10": {
         "type": "package",
         "dependencies": {
-          "MelbergFramework.Core": "8.0.8",
+          "MelbergFramework.Core": "8.0.10",
           "Swashbuckle.AspNetCore": "6.5.0"
         },
         "compile": {
@@ -296,7 +296,7 @@
           "Microsoft.AspNetCore.App"
         ]
       },
-      "MelbergFramework.Core/8.0.8": {
+      "MelbergFramework.Core/8.0.10": {
         "type": "package",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection": "8.0.0",
@@ -327,11 +327,11 @@
           "lib/net8.0/MelbergFramework.Infrastructure.InfluxDB.dll": {}
         }
       },
-      "MelbergFramework.Infrastructure.Rabbit/8.0.14": {
+      "MelbergFramework.Infrastructure.Rabbit/8.0.15": {
         "type": "package",
         "dependencies": {
-          "MelbergFramework.Application": "8.0.8",
-          "MelbergFramework.Core": "8.0.8",
+          "MelbergFramework.Application": "8.0.10",
+          "MelbergFramework.Core": "8.0.10",
           "Microsoft.Extensions.Configuration": "8.0.0",
           "Microsoft.Extensions.Configuration.Binder": "8.0.0",
           "Microsoft.Extensions.DependencyInjection": "8.0.0",
@@ -348,6 +348,23 @@
         },
         "runtime": {
           "lib/net8.0/MelbergFramework.Infrastructure.Rabbit.dll": {}
+        }
+      },
+      "MelbergFramework.Infrastructure.Redis/8.0.15": {
+        "type": "package",
+        "dependencies": {
+          "MelbergFramework.Core": "8.0.10",
+          "Microsoft.Extensions.Configuration": "8.0.0",
+          "Microsoft.Extensions.Options": "8.0.0",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "8.0.0",
+          "Microsoft.Extensions.Options.DataAnnotations": "8.0.0",
+          "StackExchange.Redis": "2.10.1"
+        },
+        "compile": {
+          "lib/net8.0/MelbergFramework.Infrastructure.Redis.dll": {}
+        },
+        "runtime": {
+          "lib/net8.0/MelbergFramework.Infrastructure.Redis.dll": {}
         }
       },
       "Microsoft.Extensions.ApiDescription.Server/6.0.5": {
@@ -1089,6 +1106,22 @@
           }
         }
       },
+      "Pipelines.Sockets.Unofficial/2.2.8": {
+        "type": "package",
+        "dependencies": {
+          "System.IO.Pipelines": "5.0.1"
+        },
+        "compile": {
+          "lib/net5.0/Pipelines.Sockets.Unofficial.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net5.0/Pipelines.Sockets.Unofficial.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "RabbitMQ.Client/6.2.2": {
         "type": "package",
         "dependencies": {
@@ -1118,6 +1151,24 @@
         },
         "runtime": {
           "lib/net7.0/RestSharp.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "StackExchange.Redis/2.10.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
+          "Pipelines.Sockets.Unofficial": "2.2.8",
+          "System.IO.Hashing": "9.0.10"
+        },
+        "compile": {
+          "lib/net8.0/StackExchange.Redis.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/StackExchange.Redis.dll": {
             "related": ".xml"
           }
         }
@@ -1301,6 +1352,35 @@
           "runtimes/win/lib/net6.0/System.Drawing.Common.dll": {
             "assetType": "runtime",
             "rid": "win"
+          }
+        }
+      },
+      "System.IO.Hashing/9.0.10": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/System.IO.Hashing.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/System.IO.Hashing.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/net8.0/_._": {}
+        }
+      },
+      "System.IO.Pipelines/5.0.1": {
+        "type": "package",
+        "compile": {
+          "ref/netcoreapp2.0/System.IO.Pipelines.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/System.IO.Pipelines.dll": {
+            "related": ".xml"
           }
         }
       },
@@ -1498,11 +1578,44 @@
       "DomainService/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "Domain": "1.0.0",
+          "Infrastructure.Rabbit": "1.0.0",
+          "Infrastructure.Redis": "1.0.0"
+        },
         "compile": {
           "bin/placeholder/DomainService.dll": {}
         },
         "runtime": {
           "bin/placeholder/DomainService.dll": {}
+        }
+      },
+      "Infrastructure.Rabbit/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "Domain": "1.0.0",
+          "MelbergFramework.Infrastructure.Rabbit": "8.0.15"
+        },
+        "compile": {
+          "bin/placeholder/Infrastructure.Rabbit.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Infrastructure.Rabbit.dll": {}
+        }
+      },
+      "Infrastructure.Redis/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "Domain": "1.0.0",
+          "MelbergFramework.Infrastructure.Redis": "8.0.15"
+        },
+        "compile": {
+          "bin/placeholder/Infrastructure.Redis.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Infrastructure.Redis.dll": {}
         }
       }
     }
@@ -1966,27 +2079,27 @@
         "lib/netstandard2.0/JsonSubTypes.dll"
       ]
     },
-    "MelbergFramework.Application/8.0.8": {
-      "sha512": "MU2DtTQylDmmf3k+dc/8S22IiwvpyvFBWd1jpI/s/czXXMvPhYixWU0whe9LRI/1UVq2ZzN714E6DneHmy/gZA==",
+    "MelbergFramework.Application/8.0.10": {
+      "sha512": "m3wmLJpdO9PfNnxEBRLesaGqq2t2i/1qHEZe9gO0qegIdMftMtE+H9H54kBulGdtSWFmbsrccuvRzvIrE7dJVQ==",
       "type": "package",
-      "path": "melbergframework.application/8.0.8",
+      "path": "melbergframework.application/8.0.10",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "lib/net8.0/MelbergFramework.Application.dll",
-        "melbergframework.application.8.0.8.nupkg.sha512",
+        "melbergframework.application.8.0.10.nupkg.sha512",
         "melbergframework.application.nuspec"
       ]
     },
-    "MelbergFramework.Core/8.0.8": {
-      "sha512": "TZJstvc5xtvXqQkRm4wTnqyqMMEBUzqcwHJ+SR6XcDJDFeD5apAn4aHKo93BDlSPqw0THN+4N8He5QjhbzoZmA==",
+    "MelbergFramework.Core/8.0.10": {
+      "sha512": "jmqYM3GcTxIa/tT4/kRmiGSDRcinriLUa9INYk+90NgiJwml7jAm+bznXIE+0BRtmOEHWeM3LilUHuT1dFBmTA==",
       "type": "package",
-      "path": "melbergframework.core/8.0.8",
+      "path": "melbergframework.core/8.0.10",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "lib/net8.0/MelbergFramework.Core.dll",
-        "melbergframework.core.8.0.8.nupkg.sha512",
+        "melbergframework.core.8.0.10.nupkg.sha512",
         "melbergframework.core.nuspec"
       ]
     },
@@ -2002,16 +2115,28 @@
         "melbergframework.infrastructure.influxdb.nuspec"
       ]
     },
-    "MelbergFramework.Infrastructure.Rabbit/8.0.14": {
-      "sha512": "DL7GF0u01PlORIAjUyTkqC2kKhDUeTKL+P/RSSxhKMMwTv015d0go1K0QFSNze+vaXmq5K9KM9y0PP+EgaV+Dw==",
+    "MelbergFramework.Infrastructure.Rabbit/8.0.15": {
+      "sha512": "T9e4yEEDRz9rPyUenmcrFqM+usyC+ZVNi/GVjtHUE8c2lVAfbLa+/gMfY1LA01z1RTuNKQIMQ/cm0Rf/gU3VSQ==",
       "type": "package",
-      "path": "melbergframework.infrastructure.rabbit/8.0.14",
+      "path": "melbergframework.infrastructure.rabbit/8.0.15",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "lib/net8.0/MelbergFramework.Infrastructure.Rabbit.dll",
-        "melbergframework.infrastructure.rabbit.8.0.14.nupkg.sha512",
+        "melbergframework.infrastructure.rabbit.8.0.15.nupkg.sha512",
         "melbergframework.infrastructure.rabbit.nuspec"
+      ]
+    },
+    "MelbergFramework.Infrastructure.Redis/8.0.15": {
+      "sha512": "MMeUhrM3UxHTk2T62wH7lTqBQNd2tH6YjzOw15ZvFPYCdd3EDkT/+D3/PWnAFfj5X6CT7am/ik3xpWU9fufB0g==",
+      "type": "package",
+      "path": "melbergframework.infrastructure.redis/8.0.15",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net8.0/MelbergFramework.Infrastructure.Redis.dll",
+        "melbergframework.infrastructure.redis.8.0.15.nupkg.sha512",
+        "melbergframework.infrastructure.redis.nuspec"
       ]
     },
     "Microsoft.Extensions.ApiDescription.Server/6.0.5": {
@@ -3326,6 +3451,29 @@
         "nodatime.serialization.jsonnet.nuspec"
       ]
     },
+    "Pipelines.Sockets.Unofficial/2.2.8": {
+      "sha512": "zG2FApP5zxSx6OcdJQLbZDk2AVlN2BNQD6MorwIfV6gVj0RRxWPEp2LXAxqDGZqeNV1Zp0BNPcNaey/GXmTdvQ==",
+      "type": "package",
+      "path": "pipelines.sockets.unofficial/2.2.8",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net461/Pipelines.Sockets.Unofficial.dll",
+        "lib/net461/Pipelines.Sockets.Unofficial.xml",
+        "lib/net472/Pipelines.Sockets.Unofficial.dll",
+        "lib/net472/Pipelines.Sockets.Unofficial.xml",
+        "lib/net5.0/Pipelines.Sockets.Unofficial.dll",
+        "lib/net5.0/Pipelines.Sockets.Unofficial.xml",
+        "lib/netcoreapp3.1/Pipelines.Sockets.Unofficial.dll",
+        "lib/netcoreapp3.1/Pipelines.Sockets.Unofficial.xml",
+        "lib/netstandard2.0/Pipelines.Sockets.Unofficial.dll",
+        "lib/netstandard2.0/Pipelines.Sockets.Unofficial.xml",
+        "lib/netstandard2.1/Pipelines.Sockets.Unofficial.dll",
+        "lib/netstandard2.1/Pipelines.Sockets.Unofficial.xml",
+        "pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
+        "pipelines.sockets.unofficial.nuspec"
+      ]
+    },
     "RabbitMQ.Client/6.2.2": {
       "sha512": "+tJSgE+rQXgLvOxWvOxdZ0+No1EMa86+puZuNlCb4cNryHw2PY2Xiw/y2dz/WWdeJQp74Y2UnNXPkuLiYpvn+A==",
       "type": "package",
@@ -3363,6 +3511,30 @@
         "restsharp.110.1.0.nupkg.sha512",
         "restsharp.nuspec",
         "restsharp.png"
+      ]
+    },
+    "StackExchange.Redis/2.10.1": {
+      "sha512": "se08WZvD42H3bV4XBW07pupTiE2/72qStKyi/lRqqcijksFWfRtwLTuhFtZ4OX19f4+we/2qruFZBXYJBFc8PQ==",
+      "type": "package",
+      "path": "stackexchange.redis/2.10.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net461/StackExchange.Redis.dll",
+        "lib/net461/StackExchange.Redis.xml",
+        "lib/net472/StackExchange.Redis.dll",
+        "lib/net472/StackExchange.Redis.xml",
+        "lib/net6.0/StackExchange.Redis.dll",
+        "lib/net6.0/StackExchange.Redis.xml",
+        "lib/net8.0/StackExchange.Redis.dll",
+        "lib/net8.0/StackExchange.Redis.xml",
+        "lib/netcoreapp3.1/StackExchange.Redis.dll",
+        "lib/netcoreapp3.1/StackExchange.Redis.xml",
+        "lib/netstandard2.0/StackExchange.Redis.dll",
+        "lib/netstandard2.0/StackExchange.Redis.xml",
+        "stackexchange.redis.2.10.1.nupkg.sha512",
+        "stackexchange.redis.nuspec"
       ]
     },
     "Swashbuckle.AspNetCore/6.5.0": {
@@ -3637,6 +3809,60 @@
         "system.drawing.common.6.0.0.nupkg.sha512",
         "system.drawing.common.nuspec",
         "useSharedDesignerContext.txt"
+      ]
+    },
+    "System.IO.Hashing/9.0.10": {
+      "sha512": "9gv5z71xaWWmcGEs4bXdreIhKp2kYLK2fvPK5gQkgnWMYvZ8ieaxKofDjxL3scZiEYfi/yW2nJTiKV2awcWEdA==",
+      "type": "package",
+      "path": "system.io.hashing/9.0.10",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "PACKAGE.md",
+        "THIRD-PARTY-NOTICES.TXT",
+        "buildTransitive/net461/System.IO.Hashing.targets",
+        "buildTransitive/net462/_._",
+        "buildTransitive/net8.0/_._",
+        "buildTransitive/netcoreapp2.0/System.IO.Hashing.targets",
+        "lib/net462/System.IO.Hashing.dll",
+        "lib/net462/System.IO.Hashing.xml",
+        "lib/net8.0/System.IO.Hashing.dll",
+        "lib/net8.0/System.IO.Hashing.xml",
+        "lib/net9.0/System.IO.Hashing.dll",
+        "lib/net9.0/System.IO.Hashing.xml",
+        "lib/netstandard2.0/System.IO.Hashing.dll",
+        "lib/netstandard2.0/System.IO.Hashing.xml",
+        "system.io.hashing.9.0.10.nupkg.sha512",
+        "system.io.hashing.nuspec",
+        "useSharedDesignerContext.txt"
+      ]
+    },
+    "System.IO.Pipelines/5.0.1": {
+      "sha512": "qEePWsaq9LoEEIqhbGe6D5J8c9IqQOUuTzzV6wn1POlfdLkJliZY3OlB0j0f17uMWlqZYjH7txj+2YbyrIA8Yg==",
+      "type": "package",
+      "path": "system.io.pipelines/5.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net461/System.IO.Pipelines.dll",
+        "lib/net461/System.IO.Pipelines.xml",
+        "lib/netcoreapp3.0/System.IO.Pipelines.dll",
+        "lib/netcoreapp3.0/System.IO.Pipelines.xml",
+        "lib/netstandard1.3/System.IO.Pipelines.dll",
+        "lib/netstandard1.3/System.IO.Pipelines.xml",
+        "lib/netstandard2.0/System.IO.Pipelines.dll",
+        "lib/netstandard2.0/System.IO.Pipelines.xml",
+        "ref/netcoreapp2.0/System.IO.Pipelines.dll",
+        "ref/netcoreapp2.0/System.IO.Pipelines.xml",
+        "system.io.pipelines.5.0.1.nupkg.sha512",
+        "system.io.pipelines.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
       ]
     },
     "System.Memory/4.5.4": {
@@ -3972,6 +4198,16 @@
       "type": "project",
       "path": "../DomainService/DomainService.csproj",
       "msbuildProject": "../DomainService/DomainService.csproj"
+    },
+    "Infrastructure.Rabbit/1.0.0": {
+      "type": "project",
+      "path": "../Infrastructure.Rabbit/Infrastructure.Rabbit.csproj",
+      "msbuildProject": "../Infrastructure.Rabbit/Infrastructure.Rabbit.csproj"
+    },
+    "Infrastructure.Redis/1.0.0": {
+      "type": "project",
+      "path": "../Infrastructure.Redis/Infrastructure.Redis.csproj",
+      "msbuildProject": "../Infrastructure.Redis/Infrastructure.Redis.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -3979,9 +4215,11 @@
       "Device.GrpcClient >= 8.0.48",
       "Domain >= 1.0.0",
       "DomainService >= 1.0.0",
-      "MelbergFramework.Application >= 8.0.8",
+      "Infrastructure.Rabbit >= 1.0.0",
+      "Infrastructure.Redis >= 1.0.0",
+      "MelbergFramework.Application >= 8.0.10",
       "MelbergFramework.Infrastructure.InfluxDB >= 8.0.2",
-      "MelbergFramework.Infrastructure.Rabbit >= 8.0.14"
+      "MelbergFramework.Infrastructure.Rabbit >= 8.0.15"
     ]
   },
   "packageFolders": {
@@ -4014,6 +4252,12 @@
             },
             "/home/jbmelberg/Git/Herder/DomainService/DomainService.csproj": {
               "projectPath": "/home/jbmelberg/Git/Herder/DomainService/DomainService.csproj"
+            },
+            "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj": {
+              "projectPath": "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj"
+            },
+            "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj": {
+              "projectPath": "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj"
             }
           }
         }
@@ -4034,7 +4278,7 @@
           },
           "MelbergFramework.Application": {
             "target": "Package",
-            "version": "[8.0.8, )"
+            "version": "[8.0.10, )"
           },
           "MelbergFramework.Infrastructure.InfluxDB": {
             "target": "Package",
@@ -4042,7 +4286,7 @@
           },
           "MelbergFramework.Infrastructure.Rabbit": {
             "target": "Package",
-            "version": "[8.0.14, )"
+            "version": "[8.0.15, )"
           }
         },
         "imports": [

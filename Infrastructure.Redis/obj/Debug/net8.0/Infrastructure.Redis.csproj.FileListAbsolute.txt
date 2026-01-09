@@ -1,0 +1,16 @@
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/bin/Debug/net8.0/Infrastructure.Redis.deps.json
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/bin/Debug/net8.0/Infrastructure.Redis.dll
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/bin/Debug/net8.0/Infrastructure.Redis.pdb
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/bin/Debug/net8.0/Domain.dll
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/bin/Debug/net8.0/Domain.pdb
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/Debug/net8.0/Infrastructure.Redis.csproj.AssemblyReference.cache
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/Debug/net8.0/Infrastructure.Redis.GeneratedMSBuildEditorConfig.editorconfig
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/Debug/net8.0/Infrastructure.Redis.AssemblyInfoInputs.cache
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/Debug/net8.0/Infrastructure.Redis.AssemblyInfo.cs
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/Debug/net8.0/Infrastructure.Redis.csproj.CoreCompileInputs.cache
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/Debug/net8.0/Infrastructure.Redis.sourcelink.json
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/Debug/net8.0/Infrastructure.Redis.csproj.CopyComplete
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/Debug/net8.0/Infrastructure.Redis.dll
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/Debug/net8.0/refint/Infrastructure.Redis.dll
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/Debug/net8.0/Infrastructure.Redis.pdb
+/home/jbmelberg/Git/Herder/Infrastructure.Redis/obj/Debug/net8.0/ref/Infrastructure.Redis.dll
