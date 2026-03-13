@@ -137,8 +137,8 @@ public static partial class PlaneFrameDecoder
     static (float, float) airborne_position_with_ref(string frame, float lat_ref, float lon_ref)
     {
         var binlist = GetBin(frame);
-        var cprlat = GetValue(mb.Skip(54).Take(17)) / 131072;
-        var cprlon = GetValue(mb.Skip(71).Take(17)) / 131072;
+        var cprlat = GetValue(binlist.Skip(54).Take(17)) / 131072;
+        var cprlon = GetValue(binlist.Skip(71).Take(17)) / 131072;
         var i = GetBin(frame)[53];
         var d_lat = i == 1 ? 3600 / 59 : 360 / 60;
         var j = Math.Floor(0.5 + lat_ref / d_lat - cprlat);
