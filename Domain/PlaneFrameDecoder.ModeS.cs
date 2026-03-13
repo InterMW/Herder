@@ -3,7 +3,7 @@ namespace Domain;
 public static partial class PlaneFrameDecoder
 {
     public static uint MODES_NON_ICAO_ADDRESS = 1 << 24;
-    static void decodeExtendedSquitter(ModeSMessage mm)
+    static void decodeExtendedSquitter(Plane plane, ModeSMessage mm)
     {
         var metype = mm.metype = GetBits(mm.Frame, 0, 4);
         mm.ME = mm.Frame.Substring(4 * 2, 7 * 2);
@@ -69,7 +69,7 @@ public static partial class PlaneFrameDecoder
             case 2:
             case 3:
             case 4:
-                decodeESIdentAndCategory(mm);
+                decodeESIdentAndCategory(plane,mm);
                 break;
 
             case 19:
@@ -127,7 +127,7 @@ public static partial class PlaneFrameDecoder
                 break;
         }
     }
-    static void decodeESIdentAndCategory(ModeSMessage mm)
+    static void decodeESIdentAndCategory(Plane plane, ModeSMessage mm)
     {
         // Aircraft Identification and Category
 
@@ -147,6 +147,7 @@ public static partial class PlaneFrameDecoder
         // A common failure mode seems to be to intermittently send
         // all zeros. Catch that here.
 
+        plane.Flight = string.Join("", mm.flight);
         mm.category = ((0x0E - mm.metype) << 4) | mm.mesub;
         mm.callsign_valid = true;//(strcmp(mm.callsign, "@@@@@@@@") != 0);
     }

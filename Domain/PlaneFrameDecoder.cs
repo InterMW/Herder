@@ -42,7 +42,6 @@ public static partial class PlaneFrameDecoder
 
             (float, float) latlon = (-1, -1);
 
-
             if (plane.TPos != 0 && (timestamp - plane.TPos) < 180)
             {
                 var rlat = plane.Latitude.Value;
@@ -63,7 +62,6 @@ public static partial class PlaneFrameDecoder
 
             if (latlon is not (-1, -1))
             {
-                
                 plane.TPos = timestamp;
                 plane.Longitude = latlon.Item2;
                 plane.Latitude = latlon.Item1;
@@ -75,10 +73,10 @@ public static partial class PlaneFrameDecoder
 
 
 
-        // if (messageType == 17 || messageType == 18)
-        // {
-        // decodeExtendedSquitter(frame);
-        // }
+        if (messageType == 17 || messageType == 18)
+        {
+            decodeExtendedSquitter(plane, new ModeSMessage(frame));
+        }
     }
 
     static (float, float) position(string msg0, string msg1, long t0, long t1)
