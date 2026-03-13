@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "/fLUAXRZ7uZ84PDxWUkBoXBC+o82dGs6DNb5vfdJWlp1gPZYNSQ2VKQnwGCrTehELNsvuQeiJOM3iSl0hOwpPw==",
+  "dgSpecHash": "a2vezMPgegt4Cuwji8q7lQLka4z17PzS1/pTx8Wq0pqqoOikVaWpVehJYB103H3bAWFzXRNqRBRdVKYPSbkG/Q==",
   "success": true,
   "projectFilePath": "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj",
   "expectedPackageFiles": [

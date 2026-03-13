@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ci6FPGLc+6lcEdPTfBNy/O+NvjWu5ihX9RwqcXGhLRsCmPORWkRTi5kjjL0yVCIfgWzotbO1cgo9B73tdv+afA==",
+  "dgSpecHash": "lWHzdt8RwHslQPizkixMmrZDKjvXNW+dEwWCOLvtaUQDcZNPyFqnnqPIAV9PMi/vQ9UeNq989DqPaavZovqYRg==",
   "success": true,
   "projectFilePath": "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj",
   "expectedPackageFiles": [

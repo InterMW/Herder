@@ -7,6 +7,12 @@
     <Nullable>enable</Nullable>
     <UserSecretsId>b3d50340-955d-4985-b46e-b5adb42d6af4</UserSecretsId>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Device.GrpcClient" Version="8.0.48" />
