@@ -75,7 +75,7 @@ jobs:
     # uses: nekiro/ssh-job@e0d177751aced5bcaf110ce4d782a681e5e12856
        uses: nekiro/ssh-job@v1.0.5
        with:
-        command:  docker pull ${{secrets.DOCKER_HOST}}/${{env.TAG}}; docker stop ${{env.TAG}}; docker rm ${{env.TAG}}; docker run --name ${{env.TAG}} --restart=unless-stopped --net inter_network -m=500m -d ${{secrets.DOCKER_HOST}}/${{env.TAG}}; 
+        command:  docker pull ${{secrets.DOCKER_HOST}}/${{env.TAG}}; docker stop ${{env.TAG}}; docker rm ${{env.TAG}}; docker run --name ${{env.TAG}} -p 6006:8080 --restart=unless-stopped --net inter_network -m=500m -d ${{secrets.DOCKER_HOST}}/${{env.TAG}}; 
         host: ${{secrets.HOST}}
         user: ${{secrets.CENTURION_USERNAME}}
         password: ${{secrets.CENTURION_PASSWORD}}
