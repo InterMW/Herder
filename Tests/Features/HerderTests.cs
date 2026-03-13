@@ -1,0 +1,125 @@
+using LightBDD.Framework.Scenarios;
+using LightBDD.MsTest3;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Tests.Features;
+
+[TestClass]
+public partial class HerderTests : BaseTestFrame
+{
+    [Scenario]
+    [TestMethod]
+    [DataRow("8D75804B580FF2CF7E9BA6F701D0","8D75804B580FF6B283EB7A157117", "75804B")]
+    public async Task ExtractPosition(string frame1, string frame2, string icao)
+    {
+        await Runner.RunScenarioAsync(
+            _ => Init_test(),
+            _ => Setup_scenarios(),
+            _ => Message_comes("device", $"5F{icao}BB4F87", 10),
+            _ => Message_comes("device", frame1, 10),
+            _ => Message_comes("device", frame2, 10),
+            _ => Clock_strikes(10),
+            _ => Expect_Position(icao, 10.2162144, 123.889128)
+                );
+    }
+
+    [Scenario]
+    [TestMethod]
+    [DataRow("29001B3AF47E76", "7C1474", "3751")]
+    public async Task DoThing(string frame, string icao, string squawk)
+    {
+        await Runner.RunScenarioAsync(
+            _ => Init_test(),
+            _ => Setup_scenarios(),
+            _ => Message_comes("device", $"5F{icao}BB4F87", 10),
+            _ => Message_comes("device", frame, 10),
+            _ => Clock_strikes(10),
+            _ => Expect_Squawk(icao, squawk)
+                );
+    }
+    
+    [Scenario]
+    [TestMethod]
+    [DataRow("00050319AB8C22", "7C7B5A", 4025)]
+    public async Task DoThing(string frame, string icao, int altitude)
+    {
+        await Runner.RunScenarioAsync(
+            _ => Init_test(),
+            _ => Setup_scenarios(),
+            _ => Message_comes("device", $"5F{icao}BB4F87", 10),
+            _ => Message_comes("device", "5F7C7B5ABB4F87", 10),
+            _ => Message_comes("device", frame, 10),
+            _ => Clock_strikes(10),
+            _ => Expect_Altitude(icao, altitude)
+                );
+    }
+    [Scenario]
+    [TestMethod]
+    [DataRow("5F7C7B5ABB4F87", "7C7B5A")]
+    [DataRow("8C7C451C423C52D692D953855472", "7C451C")]
+    [DataRow("907CF7C7C1000000001F04BF815D", "7CF7C7")]
+    public async Task ConfirmIcaoFilteringForIcaoPresent(string frame, string icao)
+    {
+        await Runner.RunScenarioAsync(
+            _ => Init_test(),
+            _ => Setup_scenarios(),
+            _ => Message_comes("device",frame, 4),
+            _ => Icao_was_seen("device",icao)
+        );
+    }
+     
+    [Scenario]
+    [TestMethod]
+    [DataRow("00050319AB8C22", "7C7B5A")]
+    [DataRow("200006A2DE8B1C", "7C1B28")]
+    [DataRow("29001B3AF47E76", "7C1474")]
+    [DataRow("8061942058A20AA10C3A1E6EE7CD", "7C431F")]
+    [DataRow("A000019D10000800F000004635C0", "7C7F0D")]
+    [DataRow("A8000F0D10010080FD0000A892C2", "7C1C70")]
+    [DataRow("C482DD4F219709344D55CE7F0811", "7C1C70")]
+    public async Task ConfirmIcaoAcceptenceForIcaoEncoded(string frame, string icao)
+    {
+        await Runner.RunScenarioAsync(
+            _ => Init_test(),
+            _ => Setup_scenarios(),
+            _ => Message_comes("device", $"5F{icao}BB4F87", 4),
+            _ => Message_comes("device", frame, 4),
+            _ => Icao_was_seen("device", icao)
+        );
+    }
+
+    [Scenario]
+    [TestMethod]
+    [DataRow("00050319AB8C22", "7C7B5A")]
+    [DataRow("200006A2DE8B1C", "7C1B28")]
+    [DataRow("29001B3AF47E76", "7C1474")]
+    [DataRow("8061942058A20AA10C3A1E6EE7CD", "7C431F")]
+    [DataRow("A000019D10000800F000004635C0", "7C7F0D")]
+    [DataRow("A8000F0D10010080FD0000A892C2", "7C1C70")]
+    [DataRow("C482DD4F219709344D55CE7F0811", "7C1C70")]
+    public async Task ConfirmIcaoRejectionForIcaoEncoded(string frame, string icao)
+    {
+        await Runner.RunScenarioAsync(
+            _ => Init_test(),
+            _ => Setup_scenarios(),
+            _ => Message_comes("device", frame, 4),
+            _ => Icao_was_not_seen("device", icao)
+        );
+
+    }
+    [Scenario]
+    [TestMethod]
+    [DataRow("00050319AB8C22", "7C7B5A")]
+    public async Task ConfirmMessageDeduplication(string frame, string icao)
+    {
+        await Runner.RunScenarioAsync(
+            _ => Init_test(),
+            _ => Setup_scenarios(),
+            _ => Message_comes("device", frame, 10),
+            _ => Message_comes("device", $"5F{icao}BB4F87", 10),
+            _ => Message_comes("device", frame, 10),
+            _ => Message_comes("device2", $"5F{icao}BB4F87", 10),
+            _ => Expect_packages(icao, 10,2)
+        );
+    }
+}
