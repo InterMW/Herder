@@ -7,23 +7,93 @@ namespace Infrastructure.Redis;
 
 public interface IPlaneRepository
 {
+    Task<Plane> GetPlane(string icao);
+    Task UpdatePlane(Plane plane);
+    Task<string> GetNextPacket(string icao, long time);
+    Task<bool> IsNewMessage(string frame);
+    IAsyncEnumerable<string> GetPackets();
     Task AddIcao(string node, string icao);
     Task<bool> ConfirmIcao(string node, string icao);
     Task RememberIcao(string node, string icao);
     Task RecordPacket(string packet, string icao, long time);
-    IAsyncEnumerable<string> GetPackets(string icao, long time);
+    Task MarkIcaoForMoment(string icao, long time);
     IAsyncEnumerable<string> GetIcaosForMoment(long time);
     Task<string> GetNextIcao(long time);
+    Task SaveFrame(SkyFrame frame);
+    Task<SkyFrame> GetSkyFrame(long time);
     Task<bool> IcaoMomentSetExists(long time);
     Task PrepareIcao(long time, string icao);
     Task<TimeAnotatedPlane> GetLastSeen(string icao);
+    Task<long> GetCompleteIcaoCount(long time);
+    Task MarkIcaoMomentAsComplete(string icao, long time);
 }
 public class PlaneRepository : RedisRepository<PlaneContext>, IPlaneRepository
 {
     private readonly TimeSpan _icaoLiftime = TimeSpan.FromSeconds(60);
-    public PlaneRepository(PlaneContext context) : base(context)
+
+    public PlaneRepository(PlaneContext context) : base(context) { }
+
+    public async Task<bool> IsNewMessage(string frame)
     {
+        var added = await DB.HashSetAsync(ProcessedMessageKey(), frame, "a", When.NotExists);
+        if (added)
+        {
+            await DB.HashFieldExpireAsync(ProcessedMessageKey(), new RedisValue[] { frame }, TimeSpan.FromSeconds(1));
+        }
+        else
+        {
+            //Console.WriteLine($"{frame} Is not  new message");
+        }
+
+        return added;
     }
+
+    private static string ToSkyFrameKey(long time) => $"skyframe_{time}";
+    public async Task<SkyFrame> GetSkyFrame(long time)
+    {
+        var key = ToSkyFrameKey(time);
+        var result = await DB.StringGetAsync( key);
+        if (!result.HasValue)
+        {
+            return new SkyFrame { Timestamp = time };
+        }
+        return JsonSerializer.Deserialize<SkyFrame>(result) ;
+    }
+    public async Task SaveFrame(SkyFrame frame)
+    {
+        var key = ToSkyFrameKey(frame.Timestamp);
+        await DB.StringSetAsync( key, JsonSerializer.Serialize<SkyFrame>(frame));
+        await DB.KeyExpireAsync(key, _icaoLiftime);
+    }
+
+    public async Task<Plane> GetPlane(string icao)
+    {
+        var result = await DB.StringGetAsync(icao);
+
+        if (!result.HasValue)
+        {
+            return new Plane(){ HexValue = icao};
+        }
+
+        return JsonSerializer.Deserialize<Plane>(result!)!;
+    }
+
+    public Task UpdatePlane(Plane plane) =>
+        DB.StringSetAsync(plane.HexValue,JsonSerializer.Serialize<Plane>(plane));
+
+    private string PlaneKey(string icao) => $"plane_{icao}";
+
+
+    public async IAsyncEnumerable<string> GetPackets()
+    {
+        await foreach (var result in DB.HashScanNoValuesAsync(ProcessedMessageKey()))
+        {
+            yield return result;//works?
+        }
+    }
+
+    private static string ProcessedMessageKey() => $"seen";
+
 
     public async Task<TimeAnotatedPlane> GetLastSeen(string icao)
     {
@@ -34,17 +104,24 @@ public class PlaneRepository : RedisRepository<PlaneContext>, IPlaneRepository
             return new TimeAnotatedPlane() { HexValue = icao };
         }
 
-        return JsonSerializer.Deserialize<TimeAnotatedPlane>(result!) ?? new TimeAnotatedPlane() { HexValue = icao};
+        return JsonSerializer.Deserialize<TimeAnotatedPlane>(result!) ?? new TimeAnotatedPlane() { HexValue = icao };
     }
 
     private static string LastSeenPlaneKey(string icao) => $"last_seen_{icao}";
 
-    public Task<bool> ConfirmIcao(string node, string icao) =>
-        DB.KeyExistsAsync(IcaoConfirmationKey(node, icao));
+    public async Task<bool> ConfirmIcao(string node, string icao)
+    {
+
+        // Console.WriteLine($"touch did i ? {node} {icao}");
+        var result = await DB.KeyExistsAsync(IcaoConfirmationKey(node, icao));
+        // Console.WriteLine($"{result}");
+        return result;
+    }
 
     public async Task RememberIcao(string node, string icao)
     {
-        await DB.KeyTouchAsync(IcaoConfirmationKey(node, icao));
+        //Console.WriteLine($"I touched {node} {icao}");
+        await DB.StringSetAsync(IcaoConfirmationKey(node, icao), "a");
         await DB.KeyExpireAsync(IcaoConfirmationKey(node, icao), _icaoLiftime);
     }
 
@@ -55,23 +132,19 @@ public class PlaneRepository : RedisRepository<PlaneContext>, IPlaneRepository
         await DB.KeyExpireAsync(key, _icaoLiftime);
     }
 
+    public async Task<string> GetNextPacket(string icao, long time) =>
+        (await DB.ListRightPopAsync(PacketRecordKey(icao, time))).ToString();
+
     private static string PacketRecordKey(string icao, long time) => $"{icao}_{time}";
 
     public async Task MarkIcaoForMoment(string icao, long time)
     {
+        //Console.WriteLine(IcaoSeenKey(time) + " " + icao);
         await DB.HashSetAsync(IcaoSeenKey(time), icao, 1);
     }
 
     public Task<bool> IcaoMomentSetExists(long time) => DB.KeyExistsAsync(IcaoSeenKey(time));
 
-    public async IAsyncEnumerable<string> GetPackets(string icao, long time)
-    {
-        RedisValue result;
-        while ((result = await DB.ListLeftPopAsync(PacketRecordKey(icao, time))).HasValue)
-        {
-            yield return result!;//works?
-        }
-    }
     public async IAsyncEnumerable<string> GetIcaosForMoment(long time)
     {
         await foreach (var result in DB.HashScanNoValuesAsync(IcaoSeenKey(time)))
@@ -103,6 +176,17 @@ public class PlaneRepository : RedisRepository<PlaneContext>, IPlaneRepository
 
     static string ToIcaoSetString(string node) => $"{node}_icao_set";
 
+    public async Task MarkIcaoMomentAsComplete(string icao, long time)
+    {
+        var key = PreparedIcaosKey(time);
+        await DB.ListRightPushAsync(key, icao);
+        await DB.KeyExpireAsync(key, _icaoLiftime);
+    }
+
+    public Task<long> GetCompleteIcaoCount(long time) =>
+        DB.SetLengthAsync(PreparedIcaosKey(time));
+
+    private static string CompletedIcaosKey(long time) => $"complete_{time}";
 
     static string IcaoConfirmationKey(string node, string icao) => $"icao_{node}_{icao}";
 

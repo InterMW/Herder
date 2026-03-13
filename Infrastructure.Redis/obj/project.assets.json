@@ -16,7 +16,7 @@
           "lib/net8.0/MelbergFramework.Core.dll": {}
         }
       },
-      "MelbergFramework.Infrastructure.Redis/8.0.15": {
+      "MelbergFramework.Infrastructure.Redis/8.0.19": {
         "type": "package",
         "dependencies": {
           "MelbergFramework.Core": "8.0.10",
@@ -804,15 +804,15 @@
         "melbergframework.core.nuspec"
       ]
     },
-    "MelbergFramework.Infrastructure.Redis/8.0.15": {
-      "sha512": "MMeUhrM3UxHTk2T62wH7lTqBQNd2tH6YjzOw15ZvFPYCdd3EDkT/+D3/PWnAFfj5X6CT7am/ik3xpWU9fufB0g==",
+    "MelbergFramework.Infrastructure.Redis/8.0.19": {
+      "sha512": "ay5Yzq3NKz+4n7iU9vBAF03P5B617SHCa8AczQXtk1uWHlhDQ6GlzQXODNPI1SRc7SH7A4ez+K7Ao48I3vcxIA==",
       "type": "package",
-      "path": "melbergframework.infrastructure.redis/8.0.15",
+      "path": "melbergframework.infrastructure.redis/8.0.19",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "lib/net8.0/MelbergFramework.Infrastructure.Redis.dll",
-        "melbergframework.infrastructure.redis.8.0.15.nupkg.sha512",
+        "melbergframework.infrastructure.redis.8.0.19.nupkg.sha512",
         "melbergframework.infrastructure.redis.nuspec"
       ]
     },
@@ -2024,7 +2024,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "Domain >= 1.0.0",
-      "MelbergFramework.Infrastructure.Redis >= 8.0.15"
+      "MelbergFramework.Infrastructure.Redis >= 8.0.19"
     ]
   },
   "packageFolders": {
@@ -2070,7 +2070,7 @@
         "dependencies": {
           "MelbergFramework.Infrastructure.Redis": {
             "target": "Package",
-            "version": "[8.0.15, )"
+            "version": "[8.0.19, )"
           }
         },
         "imports": [
@@ -2089,7 +2089,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.121/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.124/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

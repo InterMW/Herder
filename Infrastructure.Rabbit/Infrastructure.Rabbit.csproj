@@ -4,6 +4,7 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+
   <ItemGroup>
     <PackageReference Include="MelbergFramework.Infrastructure.Rabbit" Version="8.0.15" />
   </ItemGroup>

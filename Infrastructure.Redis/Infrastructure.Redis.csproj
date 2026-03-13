@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-          <PackageReference Include="MelbergFramework.Infrastructure.Redis" Version="8.0.15" />
+          <PackageReference Include="MelbergFramework.Infrastructure.Redis" Version="8.0.19" />
   </ItemGroup>
 
 </Project>

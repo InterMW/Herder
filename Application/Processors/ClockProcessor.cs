@@ -1,4 +1,5 @@
 using DomainService;
+using MelbergFramework.Core.Time;
 using MelbergFramework.Infrastructure.Rabbit.Consumers;
 using MelbergFramework.Infrastructure.Rabbit.Messages;
 using MelbergFramework.Infrastructure.Rabbit.Translator;
@@ -6,31 +7,35 @@ using Microsoft.Extensions.Logging;
 
 namespace Application.Processor;
 
-public class PacketProcessor(
-        IJsonToObjectTranslator<PacketMessage> translator,
-        IPacketIngestorService domainService,
-        ILogger<PacketProcessor> logger) : IStandardConsumer
+public class ClockProcessor(
+        IJsonToObjectTranslator<ClockMessage> translator,
+        IPacketCoordindatorService domainService,
+        IClock clock,
+        ILogger<ClockProcessor> logger) : IStandardConsumer
 {
     public async Task ConsumeMessageAsync(Message message, CancellationToken ct)
     {
+
         // Console.WriteLine(message.Body);
         var dto = translator.Translate(message);
+        var now = (long)(clock.GetUtcNow()-DateTime.UnixEpoch).TotalSeconds;
+        Console.WriteLine($"Recieved for {now-3}");
         try
         {
-            await domainService.RecordPacket(dto.SerialNumber, dto.Frame);
+            await domainService.Coordinate(now-3);
+
         }
         catch (System.Exception ex)
         {
+
             Console.WriteLine(ex);
         }
     }
 }
 
-public class PacketMessage : StandardMessage
+public class ClockMessage : StandardMessage
 {
-    public string SerialNumber { get; set; } = string.Empty;
-
-    public string Frame { get; set; } = string.Empty;
-
-    public override string GetRoutingKey() => "adsbframe";
+    public long Time { get; set; }
+    public override string GetRoutingKey() => "time";
 }
+

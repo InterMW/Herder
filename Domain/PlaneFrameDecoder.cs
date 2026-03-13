@@ -1,207 +1,236 @@
 namespace Domain;
 
-public static class PlaneFrameDecoder
+public static partial class PlaneFrameDecoder
 {
     public static int INVALID_ALTITUDE = -9999;
-    public static ModeSMessage DecodeModesFrame(string frame, HashSet<UInt32> validIcaos)
+
+    public static void ApplyFrame(Plane plane, string frame, long timestamp)
     {
-        Console.WriteLine(frame);
-        var result = new ModeSMessage(frame);
+        var message = new ModeSMessage(frame);
+        var frameBytes = Enumerable
+                .Range(0, frame.Length / 2)
+                .Select(_ => (byte)(byte.Parse(frame.Substring(2 * _, 2), System.Globalization.NumberStyles.HexNumber)))
+                .ToArray();
 
-        result.MessageType = result.GetDownlinkFormat();
-        Console.WriteLine($"The message type is {result.MessageType}");
-        result.MessageBits = result.ModesMessageLenByType(result.MessageType);
-        Console.WriteLine($"The messageBits is {result.MessageBits}");
-        result.Crc = result.GetCrc();
-        Console.WriteLine($"The crc is {result.Crc.ToString("x")}");
-        var crc2 = result.ModesSChecksum();
-        result.CrcOk = crc2 == result.Crc;
-        Console.WriteLine($"crc2 is {crc2.ToString("x")}");
+        var messageType = (byte)(frameBytes[0] >> 3);
+
+        if (messageType == 0 || messageType == 4 || messageType == 16 || messageType == 20)
+        {
+            var altitude = decodeAC13Field(GetBits(frame, 23, 31));
+            if (altitude >= 0)
+            {
+                plane.Altitude = altitude;
+            }
+        }
+        // ID (Identity)
+        if (messageType == 5 || messageType == 21)
+        {
+            // Gillham encoded Squawk
+            var id = GetBits(frame, 19, 31);
+            if (id != 0)
+            {
+
+                plane.Squawk = string.Format("{0:x4}", decodeID13Field(id));
+                plane.SquawkValid = true;
+            }
+        }
+        if (messageType >= 5 && messageType <= 18)
+        {
+            var oe = GetBin(frame)[53];
+            plane.PositionMessage[oe] = frame;
+            plane.PositionTimestamp[oe] = timestamp;
+
+            (float, float) latlon = (-1, -1);
+
+            if (plane.TPos != 0 && (timestamp - plane.TPos) < 180)
+            {
+                var rlat = plane.Latitude.Value;
+                var rlon = plane.Longitude.Value;
+                latlon = position_with_ref(message, rlat, rlon);
+            }
+            else if (plane.PositionTimestamp[0] != 0 && plane.PositionTimestamp[1] != 0
+                    && Math.Abs(plane.PositionTimestamp[0] - plane.PositionTimestamp[1]) < 10)
+            {
+                latlon = position(
+                        plane.PositionMessage[0],
+                        plane.PositionMessage[1],
+                        plane.PositionTimestamp[0],
+                        plane.PositionTimestamp[1]
+                        );
+            }
+
+            if (latlon is not (-1, -1))
+            {
+                
+                plane.TPos = timestamp;
+                plane.Longitude = latlon.Item2;
+                plane.Latitude = latlon.Item1;
+                //Console.WriteLine($"{plane.Latitude}");
+                //plane.Altitude = altitude(frame);
+
+            }
+        }
 
 
-        /* Note that most of the other computation happens *after* we fix
-         * the single bit errors, otherwise we would need to recompute the
-         * fields again. */
-        // result.CA = result.GetByteMasked(0, 7);/* Responder capabilities. */
 
-        /* ICAO address */
-        result.aa1 = (UInt16)result.GetBits(1 * 8, 8);
-        result.aa2 = (UInt16)result.GetBits(2 * 8, 8);
-        result.aa3 = (UInt16)result.GetBits(3 * 8, 8);
-
-        /* DF 17 type (assuming this is a DF17, otherwise not used) */
-        result.metype = result.GetBits(4 * 8, 5);/* Extended squitter message type. */
-        result.mesub = result.GetBits(37, 3);/* Extended squitter message type. */
-
-        /* Fields for DF4,5,20,21 */
-        result.fs = result.GetBits(5, 3);/* Flight status for DF4,5,20,21 */
-        result.dr = result.GetBits(8, 5);/* Request extraction of downlink request. */
-        result.um = result.GetBits(13, 6);/* Request extraction of downlink request. */
-
-        /* In the squawk (identity) field bits are interleaved like that
-         * (message bit 20 to bit 32):
-         *
-         * C1-A1-C2-A2-C4-A4-ZERO-B1-D1-B2-D2-B4-D4
-         *
-         * So every group of three bits A, B, C, D represent an integer
-         * from 0 to 7.
-         *
-         * The actual meaning is just 4 octal numbers, but we convert it
-         * into a base ten number tha happens to represent the four
-         * octal numbers.
-         *
-        //  * For more info: http://en.wikipedia.org/wiki/Gillham_code */
+        // if (messageType == 17 || messageType == 18)
         // {
-        //     int a, b, c, d;
-
-        //     a = ((msg[3] & 0x80) >> 5) |
-        //         ((msg[2] & 0x02) >> 0) |
-        //         ((msg[2] & 0x08) >> 3);
-        //     b = ((msg[3] & 0x02) << 1) |
-        //         ((msg[3] & 0x08) >> 2) |
-        //         ((msg[3] & 0x20) >> 5);
-        //     c = ((msg[2] & 0x01) << 2) |
-        //         ((msg[2] & 0x04) >> 1) |
-        //         ((msg[2] & 0x10) >> 4);
-        //     d = ((msg[3] & 0x01) << 2) |
-        //         ((msg[3] & 0x04) >> 1) |
-        //         ((msg[3] & 0x10) >> 4);
-        //     mm->identity = a * 1000 + b * 100 + c * 10 + d;
+        // decodeExtendedSquitter(frame);
         // }
+    }
 
-        /* DF 11 & 17: try to populate our ICAO addresses whitelist.
-         * DFs with an AP field (xored addr and crc), try to decode it. */
-        if (result.MessageType != 11 && result.MessageType != 17)
+    static (float, float) position(string msg0, string msg1, long t0, long t1)
+    {
+        var tc0 = typecode(msg0);
+        var tc1 = typecode(msg1);
+        if (9 <= tc0 && tc0 <= 18 && 9 <= tc1 && tc1 <= 18)
         {
-            /* Check if we can check the checksum for the Downlink Formats where
-             * the checksum is xored with the aircraft ICAO address. We try to
-             * brute force it using a list of recently seen aircraft addresses. */
+            return airborne_position(msg0, msg1, t0, t1);
+        }
 
-            if (result.bruteForceAP(validIcaos))
-            {
-                /* We recovered the message, mark the checksum as valid. */
-                result.CrcOk = true;
-            }
-            else
-            {
-                result.CrcOk = false;
-            }
+        if (20 <= tc0 && tc0 <= 22 && 20 <= tc1 && tc0 <= 22)
+        {
+            return airborne_position(msg0, msg1, t0, t1);
+        }
+
+        return (-1, -1);
+    }
+
+    static (float, float) airborne_position(string msg0, string msg1, long t0, long t1)
+    {
+        var mb0 = GetBin(msg0);
+        var mb1 = GetBin(msg1);
+
+
+        var cprlat_even = GetValue(mb0.Skip(54).Take(17)) ;
+        var cprlon_even = GetValue(mb0.Skip(71).Take(17)) ;
+        var cprlat_odd = GetValue(mb1.Skip(54).Take(17)) ;
+        var cprlon_odd = GetValue(mb1.Skip(71).Take(17)) ;
+        var (a, b, c) = Cpr.decodeCPRairborne(cprlat_even, cprlon_even, cprlat_odd, cprlon_odd, t0 > t1);
+        if (a == 0)
+        {
+            return ((float)b, (float)c);
+        }
+
+        return (-1, -1);
+    }
+
+    static int Extract(string frame, int bitStart, int bitEnd) => GetValue(GetBin(frame).Skip(bitStart).Take(bitEnd - bitStart));
+
+
+    static int typecode(string frame) => GetValue(GetBin(frame).Skip(32).Take(5));
+
+    private static (float, float) position_with_ref(ModeSMessage message, float lat_ref, float lon_ref)
+    {
+        if (5 <= message.MessageType && message.MessageType <= 8)
+        {
+            return surface_position_with_ref(message.Frame, lat_ref, lon_ref);
+        }
+
+        if ((9 <= message.MessageType && message.MessageType <= 18) || (20 <= message.MessageType && message.MessageType <= 22))
+        {
+            return airborne_position_with_ref(message.Frame, lat_ref, lon_ref);
+        }
+
+        return (-1,-1);
+    }
+    static (float, float) airborne_position_with_ref(string frame, float lat_ref, float lon_ref)
+    {
+        var mb = GetBin(frame).Skip(32 - 1);
+        var cprlat = GetValue(mb.Skip(53).Take(17)) / 131072;
+        var cprlon = GetValue(mb.Skip(70).Take(17)) / 131072;
+        var i = mb.ToArray()[21];
+        var d_lat = i == 1 ? 3600 / 59 : 360 / 60;
+        var j = Math.Floor(0.5 + lat_ref / d_lat - cprlat);
+        var lat = d_lat * (j + cprlat);
+        var ni = cprNL((float)lat) - i;
+
+        float d_lon;
+        if (ni > 0)
+        {
+            d_lon = 90 / ni;
         }
         else
         {
-            /* If this is DF 11 or DF 17 and the checksum was ok,
-             * we can add this address to the list of recently seen
-             * addresses. */
-            // if (mm->crcok && mm->errorbit == -1)
-            // {
-           result.Addr = (result.aa1 << 16) | (result.aa2 << 8) | result.aa3;
-          // addRecentlySeenICAOAddr(addr);
-            // }
+            d_lon = 90;
         }
+        var m = Math.Floor(0.5 + lon_ref / d_lon - cprlon);
 
-        switch (result.MessageType)
+        var lon = d_lon * (m + cprlon);
+
+        return ((float)lat, (float)lon);
+    }
+
+    private static (float, float) surface_position_with_ref(string frame, float lat_ref, float lon_ref)
+    {
+        var binlist = GetBin(frame);
+        var mb = binlist.Skip(32 - 1);
+
+        var cprlat = GetValue(mb.Skip(53).Take(17)) / 131072;
+        var cprlon = GetValue(mb.Skip(70).Take(17)) / 131072;
+
+        var i = binlist[21];
+
+        var d_lat = i == 1 ? 90 / 59 : 90 / 60;
+
+
+        var j = Math.Floor(0.5 + lat_ref / d_lat - cprlat);
+
+        var lat = d_lat * (j + cprlat);
+        var ni = cprNL((float)lat) - i;
+
+        float d_lon;
+        if (ni > 0)
         {
-
-            /* Decode 13 bit altitude for DF0, DF4, DF16, DF20 */
-            case 0 or 4 or 16 or 20:
-                result.Altitude = decodeAC13Field(result.GetBits(19, 13));
-                break;
-            case 17:
-                HandleMessageType17(result);
-                break;
-
-        }
-
-        /* Decode extended squitter specific stuff. */
-        // result.phase_corrected = 0; /* Set to 1 by the caller if needed. */
-        return result;
-    }
-
-    private static void HandleMessageType17(ModeSMessage result)
-    {
-        switch (result.metype)
-        {
-            case >= 1 and <= 4: ExtractPlaneName(result); break;
-            case >= 9 and <= 18: IsolateAltitudeLatLon(result); break;
-            case 19:
-                switch (result.mesub)
-                {
-                    case 1 or 2: AirborneVelocity(result); break;
-                    case 3 or 4: Heading(result); break;
-                };
-                break;
-
-            default:
-                break;
-        };
-
-    }
-    private static void Heading(ModeSMessage result)
-    {
-        result.heading_is_valid = result.GetBit(45);//msg[5] & (1 << 2);
-        result.heading = (int)((360.0 / 128) * result.GetBits(46, 10));
-    }
-
-    private static void IsolateAltitudeLatLon(ModeSMessage result)
-    {
-        /* Airborne position Message */
-        // result.fflag = msg[6] & (1 << 2);
-        // result.tflag = msg[6] & (1 << 3);
-        result.Altitude = result.decodeAC12Field();
-        result.raw_latitude = result.GetBits(54, 17);
-
-        // ((msg[6] & 3) << 15) | (msg[7] << 7) | (msg[8] >> 1);
-        result.raw_longitude = result.GetBits(71, 17);
-        // ((msg[8] & 1) << 16) | (msg[9] << 8) | msg[10];
-    }
-
-    private static void AirborneVelocity(ModeSMessage result)
-    {
-        result.ew_dir = result.GetBit(45);
-        result.ew_velocity = result.GetBits(46, 10);//((msg[5] & 3) << 8) | msg[6];
-        result.ns_dir = result.GetBit(56);//(msg[7] & 0x80) >> 7;
-        result.ns_velocity = result.GetBits(57, 10);//((msg[7] & 0x7f) << 3) | ((msg[8] & 0xe0) >> 5);
-        result.vert_rate_source = result.GetBit(67);//(msg[8] & 0x10) >> 4;
-        result.vert_rate_sign = result.GetBit(68);//(msg[8] & 0x8) >> 3;
-        result.vert_rate = result.GetBits(69, 9);// ((msg[8] & 7) << 6) | ((msg[9] & 0xfc) >> 2);
-        /* Compute velocity and angle from the two speed
-         * components. */
-        result.velocity = (int)Math.Sqrt(result.ns_velocity * result.ns_velocity +
-                            result.ew_velocity * result.ew_velocity);
-        if (result.velocity != 0)
-        {
-            int ewv = result.ew_velocity;
-            int nsv = result.ns_velocity;
-            double heading;
-
-            if (result.ew_dir != 0) ewv *= -1;
-            if (result.ns_dir != 0) nsv *= -1;
-            heading = Math.Atan2(ewv, nsv);
-
-            /* Convert to degrees. */
-            result.heading = (int)(heading * 360 / (Math.PI * 2));
-            /* We don't want negative values but a 0-360 scale. */
-            if (result.heading < 0) result.heading += 360;
+            d_lon = 90 / ni;
         }
         else
         {
-            result.heading = 0;
+            d_lon = 90;
         }
+        var m = Math.Floor(0.5 + lon_ref / d_lon - cprlon);
+
+        var lon = d_lon * (m + cprlon);
+
+        return ((float)lat, (float)lon);
+    }
+    //        (float, float): (latitude, longitude) of the aircraft
+
+    static int cprNL(float lat)
+    {
+        if (IsClose(lat, 0))
+        {
+            return 59;
+        }
+
+        else if (IsClose(lat, 87))
+        {
+            return 2;
+        }
+        else if (lat > 87 || lat < -87)
+        {
+            return 1;
+        }
+
+        var nz = 15;
+        var a = 1 - Math.Cos(Math.PI / (2 * nz));
+        var b = Math.Pow(Math.Cos(Math.PI / 180 * Math.Abs(lat)), 2);
+        var nl = 2 * Math.PI / (Math.Acos(1 - a / b));
+        var NL = (int)Math.Floor(nl);
+        return NL;
     }
 
-    public static void ExtractPlaneName(ModeSMessage result)
-    {
-        result.aircraft_type = result.metype - 1;
-        result.flight[0] = ModeSMessage.AIS[result.GetBits(40, 6)];
-        result.flight[1] = ModeSMessage.AIS[result.GetBits(46, 6)];
-        result.flight[2] = ModeSMessage.AIS[result.GetBits(52, 6)];
-        result.flight[3] = ModeSMessage.AIS[result.GetBits(58, 6)];
-        result.flight[4] = ModeSMessage.AIS[result.GetBits(64, 6)];
-        result.flight[5] = ModeSMessage.AIS[result.GetBits(70, 6)];
-        result.flight[6] = ModeSMessage.AIS[result.GetBits(76, 6)];
-        result.flight[7] = ModeSMessage.AIS[result.GetBits(82, 6)];
-        result.flight[8] = '\0';
-    }
+    static bool IsClose(float a, float b) => Math.Abs(a) - Math.Abs(b) < 0.01;
+
+
+
+
+    //    # From 1090 MOPS, Vol.1  DO-260C, A.1.7.6
+
+
+
+
+
     public static int ModeAToModeC(int ModeA)
     {
         int FiveHundreds = 0;
@@ -325,22 +354,71 @@ public static class PlaneFrameDecoder
 
     // private static bool ExtractVerticalStatus(Span<byte> bytes) => bytes[]
 
-
-    private static int ExtractTransponderCapacity(Span<byte> bytes)
+    private static int decodeAC13Field(int AC13Field, string frame)
     {
-        // int cutout = bytes[2] & )
-        return 0;
+        int m_bit = AC13Field & 0x0040; // set = meters, clear = feet
+        int q_bit = AC13Field & 0x0010; // set = 25 ft encoding, clear = Gillham Mode C encoding
+
+        if (m_bit == 0)
+        {
+            // *unit = MODES_UNIT_FEET;
+            if (q_bit != 0)
+            {
+                /* N is the 11 bit integer resulting from the removal of bit
+                 * Q and M */
+                int n = ((AC13Field & 0x1F80) >> 2) |
+                    ((AC13Field & 0x0020) >> 1) |
+                     (AC13Field & 0x000F);
+
+                /* The final altitude is due to the resulting number multiplied
+                 * by 25, minus 1000. */
+                return n * 25 - 1000;
+            }
+            else
+            {
+                /* TODO: Implement altitude where Q=0 and M=0 */
+            }
+        }
+        else
+        {
+            // *unit = MODES_UNIT_METERS;
+            /* TODO: Implement altitude when meter unit is selected. */
+        }
+        return -1;
     }
 
-    private static int ExtractValue(Span<byte> bytes, int startBit, int numBits)
+    static int[] GetBin(string frame) => frame
+            .Select(_ => int.Parse($"{_}", System.Globalization.NumberStyles.HexNumber))
+            .Select(_ => string.Format("{0:b4}", _))
+            .SelectMany(_ => _)
+            .Select(_ => _ == '1' ? 1 : 0).ToArray();
+
+    static int GetValue(IEnumerable<int> bits) 
     {
-        int startIndex = startBit / 4;
+        var result = bits.Aggregate(0, (val, next) => val * 2 + next, _ => _);
+        //Console.WriteLine($"{string.Join("",bits)}=>{result}");
 
+        return result;
+    }
 
-        //beginning
+    static int GetBits(string frame, int startbit, int endbit)
+    {
+        var bits = frame
+            .Select(_ => int.Parse($"{_}", System.Globalization.NumberStyles.HexNumber))
+            .Select(_ => string.Format("{0:b4}", _))
+            .SelectMany(_ => _).ToArray();
 
-        return 0;
+        var selector = startbit;
+        int result = 0;
+        while (selector <= endbit)
+        {
+            result <<= 1;
+            //Console.Write(bits[selector]);
+            result |= (bits[selector] == '1' ? 1 : 0);
+            selector++;
+        }
+        //Console.WriteLine();
 
-
+        return result;
     }
 }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "3eYbLCHJiK3H290RYpf1N+YdQ/8IGqwQJzJUA+Irc4x7khKjQ+I/FKrbXcff3culXgrZ7/w/N6pG53Y3M8B1dw==",
+  "dgSpecHash": "3x3EyQLauR9GxQZTBu7hOd1RcPtsGWr/pjVwy5zU6Ypjn8fd6uez99SdxHgdyGkA6vJ9X0pf+wZEYUSMLC4KaQ==",
   "success": true,
   "projectFilePath": "/home/jbmelberg/Git/Herder/Application/Application.csproj",
   "expectedPackageFiles": [
@@ -27,7 +27,7 @@
     "/home/jbmelberg/.nuget/packages/melbergframework.core/8.0.10/melbergframework.core.8.0.10.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.influxdb/8.0.2/melbergframework.infrastructure.influxdb.8.0.2.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.rabbit/8.0.15/melbergframework.infrastructure.rabbit.8.0.15.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.redis/8.0.15/melbergframework.infrastructure.redis.8.0.15.nupkg.sha512",
+    "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.redis/8.0.19/melbergframework.infrastructure.redis.8.0.19.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/microsoft.extensions.configuration/8.0.0/microsoft.extensions.configuration.8.0.0.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/microsoft.extensions.configuration.abstractions/8.0.0/microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",

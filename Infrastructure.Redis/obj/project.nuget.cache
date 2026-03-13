@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "TIczjw0q5ED2Kah7GwpkJU4pbjtw2gi9Su77gYQ+VPNwra8tY2wBn1iRAU+ZvOSGTq4x3Qed5spfK6ZpASYWOw==",
+  "dgSpecHash": "ci6FPGLc+6lcEdPTfBNy/O+NvjWu5ihX9RwqcXGhLRsCmPORWkRTi5kjjL0yVCIfgWzotbO1cgo9B73tdv+afA==",
   "success": true,
   "projectFilePath": "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj",
   "expectedPackageFiles": [
     "/home/jbmelberg/.nuget/packages/melbergframework.core/8.0.10/melbergframework.core.8.0.10.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.redis/8.0.15/melbergframework.infrastructure.redis.8.0.15.nupkg.sha512",
+    "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.redis/8.0.19/melbergframework.infrastructure.redis.8.0.19.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/microsoft.extensions.configuration/8.0.0/microsoft.extensions.configuration.8.0.0.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/microsoft.extensions.configuration.abstractions/8.0.0/microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/microsoft.extensions.configuration.binder/8.0.0/microsoft.extensions.configuration.binder.8.0.0.nupkg.sha512",

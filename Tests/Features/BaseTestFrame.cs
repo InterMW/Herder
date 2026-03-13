@@ -1,5 +1,6 @@
 using Application;
 using Application.Processor;
+using Infrastructure.Redis;
 using Infrastructure.Redis.Contexts;
 using LightBDD.MsTest3;
 using MelbergFramework.Application;
@@ -24,6 +25,8 @@ public class BaseTestFrame : FeatureFixture
             {
                 _.OverrideRedisContext<PlaneContext>();
                 // _.OverrideCouchbaseDatabase();
+                _.PrepareConsumer<ClockProcessor>();
+                _.OverrideTranslator<ClockMessage>();
                 _.PrepareConsumer<PacketProcessor>();
                 _.OverrideTranslator<PacketMessage>();
                 _.OverrideWithSingleton<IClock, MockClock>();
@@ -33,12 +36,23 @@ public class BaseTestFrame : FeatureFixture
             })
             .AddControllers()
             .Build();
+
     }
     public WebApplication App;
 
     public T GetClass<T>() => (T)App
         .Services
         .GetRequiredService(typeof(T));
+
+    public IPlaneRepository GetPlaneRepository() =>
+        App.Services.GetService<IPlaneRepository>()!;
+
+    public RabbitMicroService<ClockProcessor> GetClockService() =>
+        (RabbitMicroService<ClockProcessor>)App
+            .Services
+            .GetServices<IHostedService>()
+            .Where(_ => _.GetType() == typeof(RabbitMicroService<ClockProcessor>))
+            .First();
 
     public RabbitMicroService<PacketProcessor> GetPacketService() =>
         (RabbitMicroService<PacketProcessor>)App
