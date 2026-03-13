@@ -21,7 +21,7 @@ public class PlaneFrameController(IPlaneRepository _service, IClock _clock)
         return new PlaneFrameResponse()
         {
             Now = usedtime,
-            Planes = result.Planes.Select(_ => new PlaneResponse() 
+            Planes = result.Planes.Where(_ => _.Latitude != _.Longitude).Select(_ => new PlaneResponse() 
                     {
                         HexValue = _.HexValue,
                         Latitude = _.Latitude,
