@@ -1,4 +1,4 @@
-name: Herder CI-CD
+name: Plane Wrangler CI-CD
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
       PROJECT: Application/Application.csproj
       APPSETTINGS: Application/appsettings.json
       REPLACESETTINGS: Application/Deployment/appsettings.Production.json
-      TAG: interherder
+      TAG: intermetronome
     steps:
      - uses: actions/checkout@v2
      - name: files-ls
@@ -35,9 +35,6 @@ jobs:
      - 
       name: Replace Appsettings
       run: cp ${{env.REPLACESETTINGS}} ${{env.APPSETTINGS}}
-     - 
-      name: Replace Appsettings
-      run: cat {{env.APPSETTINGS}}
      - 
       name: Setup .NET
       uses: actions/setup-dotnet@v1
@@ -72,7 +69,7 @@ jobs:
     needs: build-publish
     runs-on: self-hosted
     env:
-      TAG: interherder
+      TAG: intermetronome
     steps:
      - name: SSH Command
     # uses: nekiro/ssh-job@e0d177751aced5bcaf110ce4d782a681e5e12856
