@@ -36,6 +36,9 @@ jobs:
       name: Replace Appsettings
       run: cp ${{env.REPLACESETTINGS}} ${{env.APPSETTINGS}}
      - 
+      name: Replace Appsettings
+      run: cat {{env.APPSETTINGS}}
+     - 
       name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
