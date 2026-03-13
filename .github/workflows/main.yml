@@ -13,7 +13,7 @@ jobs:
       PROJECT: Application/Application.csproj
       APPSETTINGS: Application/appsettings.json
       REPLACESETTINGS: Application/Deployment/appsettings.Production.json
-      TAG: intermetronome
+      TAG: interherder
     steps:
      - uses: actions/checkout@v2
      - name: files-ls
@@ -69,7 +69,7 @@ jobs:
     needs: build-publish
     runs-on: self-hosted
     env:
-      TAG: intermetronome
+      TAG: interherder
     steps:
      - name: SSH Command
     # uses: nekiro/ssh-job@e0d177751aced5bcaf110ce4d782a681e5e12856
