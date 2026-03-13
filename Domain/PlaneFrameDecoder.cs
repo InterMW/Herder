@@ -16,7 +16,7 @@ public static partial class PlaneFrameDecoder
 
         if (messageType == 0 || messageType == 4 || messageType == 16 || messageType == 20)
         {
-            var altitude = decodeAC13Field(GetBits(frame, 23, 31));
+            var altitude = decodeAC13Field(GetValue(GetBin(frame).Skip(40).Take(12)));
             if (altitude >= 0)
             {
                 plane.Altitude = altitude;
@@ -42,6 +42,7 @@ public static partial class PlaneFrameDecoder
 
             (float, float) latlon = (-1, -1);
 
+
             if (plane.TPos != 0 && (timestamp - plane.TPos) < 180)
             {
                 var rlat = plane.Latitude.Value;
@@ -51,6 +52,7 @@ public static partial class PlaneFrameDecoder
             else if (plane.PositionTimestamp[0] != 0 && plane.PositionTimestamp[1] != 0
                     && Math.Abs(plane.PositionTimestamp[0] - plane.PositionTimestamp[1]) < 10)
             {
+
                 latlon = position(
                         plane.PositionMessage[0],
                         plane.PositionMessage[1],
@@ -100,7 +102,6 @@ public static partial class PlaneFrameDecoder
     {
         var mb0 = GetBin(msg0);
         var mb1 = GetBin(msg1);
-
 
         var cprlat_even = GetValue(mb0.Skip(54).Take(17)) ;
         var cprlon_even = GetValue(mb0.Skip(71).Take(17)) ;
@@ -351,39 +352,7 @@ public static partial class PlaneFrameDecoder
     }
 
     // private static bool ExtractVerticalStatus(Span<byte> bytes) => bytes[]
-
-    private static int decodeAC13Field(int AC13Field, string frame)
-    {
-        int m_bit = AC13Field & 0x0040; // set = meters, clear = feet
-        int q_bit = AC13Field & 0x0010; // set = 25 ft encoding, clear = Gillham Mode C encoding
-
-        if (m_bit == 0)
-        {
-            // *unit = MODES_UNIT_FEET;
-            if (q_bit != 0)
-            {
-                /* N is the 11 bit integer resulting from the removal of bit
-                 * Q and M */
-                int n = ((AC13Field & 0x1F80) >> 2) |
-                    ((AC13Field & 0x0020) >> 1) |
-                     (AC13Field & 0x000F);
-
-                /* The final altitude is due to the resulting number multiplied
-                 * by 25, minus 1000. */
-                return n * 25 - 1000;
-            }
-            else
-            {
-                /* TODO: Implement altitude where Q=0 and M=0 */
-            }
-        }
-        else
-        {
-            // *unit = MODES_UNIT_METERS;
-            /* TODO: Implement altitude when meter unit is selected. */
-        }
-        return -1;
-    }
+    
 
     static int[] GetBin(string frame) => frame
             .Select(_ => int.Parse($"{_}", System.Globalization.NumberStyles.HexNumber))

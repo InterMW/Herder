@@ -30,7 +30,9 @@ public static class Cpr
 
         // Check that both are in the same latitude zone, or abort.
         if (cprNLFunction(rlat0) != cprNLFunction(rlat1))
+        {
             return (-1,0,0); // positions crossed a latitude zone, try again later
+        }
 
         // Compute ni and the Longitude Index "m"
         if (fflag)
