@@ -12,6 +12,8 @@ public static partial class PlaneFrameDecoder
                 .Select(_ => (byte)(byte.Parse(frame.Substring(2 * _, 2), System.Globalization.NumberStyles.HexNumber)))
                 .ToArray();
 
+        var lat = plane.Latitude;
+
         var messageType = (byte)(frameBytes[0] >> 3);
 
         if (messageType == 0 || messageType == 4 || messageType == 16 || messageType == 20)
@@ -42,13 +44,19 @@ public static partial class PlaneFrameDecoder
 
             (float, float) latlon = (-1, -1);
 
-            if (plane.TPos != 0 && (timestamp - plane.TPos) < 180)
-            {
-                var rlat = plane.Latitude.Value;
-                var rlon = plane.Longitude.Value;
-                latlon = position_with_ref(message, rlat, rlon);
-            }
-            else if (plane.PositionTimestamp[0] != 0 && plane.PositionTimestamp[1] != 0
+            // if (plane.TPos != 0 && (timestamp - plane.TPos) < 180)
+            // {
+            //     var rlat = plane.Latitude.Value;
+            //     var rlon = plane.Longitude.Value;
+            //     latlon = position_with_ref(message, rlat, rlon);
+            //     if (latlon is not (-1,-1))
+            //     {
+            //         Console.WriteLine($"{latlon}");
+            //     }
+            //     Console.WriteLine($"{rlat} => {latlon.Item1}");
+            // }
+            // else 
+            if (plane.PositionTimestamp[0] != 0 && plane.PositionTimestamp[1] != 0
                     && Math.Abs(plane.PositionTimestamp[0] - plane.PositionTimestamp[1]) < 10)
             {
 
@@ -60,14 +68,13 @@ public static partial class PlaneFrameDecoder
                         );
             }
 
+;
             if (latlon is not (-1, -1))
             {
                 plane.TPos = timestamp;
                 plane.Longitude = latlon.Item2;
                 plane.Latitude = latlon.Item1;
                 //Console.WriteLine($"{plane.Latitude}");
-                //plane.Altitude = altitude(frame);
-
             }
         }
 
@@ -77,6 +84,7 @@ public static partial class PlaneFrameDecoder
         {
             decodeExtendedSquitter(plane, new ModeSMessage(frame));
         }
+
     }
 
     static (float, float) position(string msg0, string msg1, long t0, long t1)
@@ -105,7 +113,7 @@ public static partial class PlaneFrameDecoder
         var cprlon_even = GetValue(mb0.Skip(71).Take(17)) ;
         var cprlat_odd = GetValue(mb1.Skip(54).Take(17)) ;
         var cprlon_odd = GetValue(mb1.Skip(71).Take(17)) ;
-        var (a, b, c) = Cpr.decodeCPRairborne(cprlat_even, cprlon_even, cprlat_odd, cprlon_odd, t0 > t1);
+        var (a, b, c) = Cpr.decodeCPRairborne(cprlat_even, cprlon_even, cprlat_odd, cprlon_odd, t0 < t1);
         if (a == 0)
         {
             return ((float)b, (float)c);
@@ -157,6 +165,8 @@ public static partial class PlaneFrameDecoder
 
         var lon = d_lon * (m + cprlon);
 
+        Console.WriteLine($"{lat_ref - lat}");
+
         return ((float)lat, (float)lon);
     }
 
@@ -188,6 +198,7 @@ public static partial class PlaneFrameDecoder
         var m = Math.Floor(0.5 + lon_ref / d_lon - cprlon);
 
         var lon = d_lon * (m + cprlon);
+        Console.WriteLine($"{lat_ref - lat}");
 
         return ((float)lat, (float)lon);
     }
