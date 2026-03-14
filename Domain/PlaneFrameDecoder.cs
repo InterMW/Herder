@@ -53,7 +53,6 @@ public static partial class PlaneFrameDecoder
                 plane.PositionTimestamp[oe] = timestamp;
 
                 (float, float) latlon = (-1, -1);
-                Console.WriteLine($"Time since {plane.HexValue} is {plane.TPos}");
 
                 if (plane.TPos != 0 && (timestamp - plane.TPos) < 180)
                 {
@@ -86,7 +85,6 @@ public static partial class PlaneFrameDecoder
                     plane.TPos = timestamp;
                     plane.Longitude = latlon.Item2;
                     plane.Latitude = latlon.Item1;
-                    Console.WriteLine($"now {plane.HexValue} lat is {plane.Latitude} and TPos is now {plane.TPos}");
                 }
             }
         }
@@ -191,8 +189,6 @@ public static partial class PlaneFrameDecoder
 
         var lon = d_lon * (m + cprlon);
 
-        Console.WriteLine($"airborne_position_with_ref{lat_ref - lat}");
-
         return ((float)lat, (float)lon);
     }
 
@@ -224,7 +220,6 @@ public static partial class PlaneFrameDecoder
         var m = Math.Floor(0.5 + lon_ref / d_lon - cprlon);
 
         var lon = d_lon * (m + cprlon);
-        Console.WriteLine($"surface_position_with_ref{lat_ref - lat}");
 
         return ((float)lat, (float)lon);
     }

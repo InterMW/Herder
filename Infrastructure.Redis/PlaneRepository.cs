@@ -75,7 +75,6 @@ public class PlaneRepository : RedisRepository<PlaneContext>, IPlaneRepository
             return new Plane(){ HexValue = icao};
         }
 
-        Console.WriteLine($"never saw {icao}");
 
         return JsonSerializer.Deserialize<Plane>(result!)!;
     }
