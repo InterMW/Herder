@@ -7,6 +7,21 @@ namespace Tests.Features;
 [TestClass]
 public partial class HerderTests : BaseTestFrame
 {
+
+    [Scenario]
+    [TestMethod]
+    [DataRow("8D7C7181215D01A08208204D8BF1", "WPF")]
+    public async Task ExtractFlightNumber(string frame, string expected)
+    {
+        await Runner.RunScenarioAsync(
+            _ => Init_test(),
+            _ => Setup_scenarios(),
+            _ => Message_comes("device", $"5F7C7181BB4F87", 10),
+            _ => Message_comes("device", frame, 10),
+            _ => Clock_strikes(13),
+            _ => Expect_Registration("7C7181", "WPF"));
+
+    }
     [Scenario]
     [TestMethod]
     [DataRow("8D75804B580FF2CF7E9BA6F701D0","8D75804B580FF6B283EB7A157117", "75804B")]

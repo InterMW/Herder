@@ -57,6 +57,12 @@ public partial class HerderTests : BaseTestFrame
         mockTranslator.Messages.Add(new PacketMessage() { SerialNumber = device, Frame = packet });
         await GetPacketService().ConsumeMessageAsync(new Message(), CancellationToken.None);
     }
+    public async Task Expect_Registration(string icao, string registration)
+    {
+        var plane = await GetPlaneRepository().GetPlane(icao);
+        Console.Write(plane.Flight + ":" + registration);
+        Assert.AreSame(registration,plane.Flight);
+    }
 
     public async Task Expect_Position(string icao, double lat, double lon)
     {

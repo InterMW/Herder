@@ -5,7 +5,7 @@ public static partial class PlaneFrameDecoder
     public static uint MODES_NON_ICAO_ADDRESS = 1 << 24;
     static void decodeExtendedSquitter(Plane plane, ModeSMessage mm)
     {
-        var metype = mm.metype = GetBits(mm.Frame, 0, 4);
+        var metype = GetValue(GetBin(mm.Frame).Skip(32).Take(5));
         mm.ME = mm.Frame.Substring(4 * 2, 7 * 2);
         var check_imf = 0;
 
@@ -131,17 +131,19 @@ public static partial class PlaneFrameDecoder
     {
         // Aircraft Identification and Category
 
-        mm.mesub = GetBits(mm.ME, 6, 8);
+        //mm.mesub = GetBits(mm.ME, 6, 8);
+
+        var bits = GetBin(mm.Frame);
 
         mm.aircraft_type = mm.metype - 1;
-        mm.flight[0] = ais_charset[GetBits(mm.Frame, 40, 6)];
-        mm.flight[1] = ais_charset[GetBits(mm.Frame, 46, 6)];
-        mm.flight[2] = ais_charset[GetBits(mm.Frame, 52, 6)];
-        mm.flight[3] = ais_charset[GetBits(mm.Frame, 58, 6)];
-        mm.flight[4] = ais_charset[GetBits(mm.Frame, 64, 6)];
-        mm.flight[5] = ais_charset[GetBits(mm.Frame, 70, 6)];
-        mm.flight[6] = ais_charset[GetBits(mm.Frame, 76, 6)];
-        mm.flight[7] = ais_charset[GetBits(mm.Frame, 82, 6)];
+        mm.flight[0] = ais_charset[GetValue(bits.Skip(40).Take(6))];
+        mm.flight[1] = ais_charset[GetValue(bits.Skip(46).Take(6))];
+        mm.flight[2] = ais_charset[GetValue(bits.Skip(52).Take(6))];
+        mm.flight[3] = ais_charset[GetValue(bits.Skip(58).Take(6))];
+        mm.flight[4] = ais_charset[GetValue(bits.Skip(64).Take(6))];
+        mm.flight[5] = ais_charset[GetValue(bits.Skip(70).Take(6))];
+        mm.flight[6] = ais_charset[GetValue(bits.Skip(76).Take(6))];
+        mm.flight[7] = ais_charset[GetValue(bits.Skip(82).Take(6))];
         mm.flight[8] = '\0';
 
         // A common failure mode seems to be to intermittently send
@@ -152,6 +154,7 @@ public static partial class PlaneFrameDecoder
         mm.callsign_valid = true;//(strcmp(mm.callsign, "@@@@@@@@") != 0);
     }
 
+
     static string ais_charset = "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_ !\"#$%&'()*+,-./0123456789:;<=>?";
     static void decodeESAirbornePosition(ModeSMessage mm, int check_imf)
     {
@@ -160,45 +163,8 @@ public static partial class PlaneFrameDecoder
         // if (check_imf && GetBits(me, 8))
         // setIMF(mm);
 
-        int AC12Field = GetBits(mm.ME, 9, 20);
-
-        if (mm.metype == 0)
-        {
-            mm.cpr_nucp = 0;
-        }
-        else
-        {
-            // Catch some common failure modes and don't mark them as valid
-            // (so they won't be used for positioning)
-
-            mm.cpr_lat = GetBits(mm.ME, 23, 39);
-            mm.cpr_lon = GetBits(mm.ME, 40, 56);
-
-            if (AC12Field == 0 && mm.cpr_lon == 0 && (mm.cpr_lat & 0x0fff) == 0 && mm.metype == 15)
-            {
-                // Seen from at least:
-                //   400F3F (Eurocopter ECC155 B1) - Bristow Helicopters
-                //   4008F3 (BAE ATP) - Atlantic Airlines
-                //   400648 (BAE ATP) - Atlantic Airlines
-                // altitude == 0, longitude == 0, type == 15 and zeros in latitude LSB.
-                // Can alternate with valid reports having type == 14
-                //Modes.stats_current.cpr_filtered++;
-            }
-            else
-            {
-                // Otherwise, assume it's valid.
-                mm.cpr_valid = true;
-                mm.cpr_type = CprType.CPR_AIRBORNE;
-                mm.cpr_odd = GetBits(mm.ME, 22, 22) != 0;
-
-                if (mm.metype == 18 || mm.metype == 22)
-                    mm.cpr_nucp = 0;
-                else if (mm.metype < 18)
-                    mm.cpr_nucp = (18 - mm.metype);
-                else
-                    mm.cpr_nucp = (29 - mm.metype);
-            }
-        }
+        int AC12Field = GetValue(GetBin(mm.Frame).Skip(40).Take(12));
+        
 
         if (AC12Field != 0)
         {// Only attempt to decode if a valid (non zero) altitude is present
