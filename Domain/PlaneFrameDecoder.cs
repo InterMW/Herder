@@ -64,11 +64,13 @@ public static partial class PlaneFrameDecoder
                     //     Console.WriteLine($"{latlon}");
                     // }
                     // Console.WriteLine($"{rlat} => {latlon.Item1}");
+                    //Console.WriteLine($"why {plane.HexValue} @ {plane.Latitude},{plane.Longitude}");
                 }
                 else
                 if (plane.PositionTimestamp[0] != 0 && plane.PositionTimestamp[1] != 0
                         && Math.Abs(plane.PositionTimestamp[0] - plane.PositionTimestamp[1]) < 10)
                 {
+
 
 
                     latlon = position(
@@ -82,6 +84,7 @@ public static partial class PlaneFrameDecoder
 
                 if (latlon is not (-1, -1))
                 {
+                    //Console.WriteLine($"{plane.HexValue} @ {plane.Latitude},{plane.Longitude}");
                     plane.TPos = timestamp;
                     plane.Longitude = latlon.Item2;
                     plane.Latitude = latlon.Item1;
@@ -168,8 +171,12 @@ public static partial class PlaneFrameDecoder
     static (float, float) airborne_position_with_ref(string frame, float lat_ref, float lon_ref)
     {
         var binlist = GetBin(frame);
-        var cprlat = GetValue(binlist.Skip(54).Take(17)) / 131072;
-        var cprlon = GetValue(binlist.Skip(71).Take(17)) / 131072;
+        
+        //var whatthe = binlist.Skip(54).Take(17);
+        //var something = GetValue(whatthe);
+        //Console.WriteLine($"{something} is?");
+        var cprlat = GetValue(binlist.Skip(54).Take(17)) / 131072.0;
+        var cprlon = GetValue(binlist.Skip(71).Take(17)) / 131072.0;
         var i = GetBin(frame)[53];
         var d_lat = i == 1 ? 3600 / 59 : 360 / 60;
         var j = Math.Floor(0.5 + lat_ref / d_lat - cprlat);

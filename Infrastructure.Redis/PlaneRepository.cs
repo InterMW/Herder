@@ -86,6 +86,7 @@ public class PlaneRepository : RedisRepository<PlaneContext>, IPlaneRepository
             //Console.WriteLine(JsonSerializer.Serialize<Plane>(plane));
         }
         await DB.StringSetAsync(PlaneKey(plane.HexValue),JsonSerializer.Serialize<Plane>(plane));
+        await DB.KeyExpireAsync(PlaneKey(plane.HexValue),_icaoLiftime);
     }
 
     private string PlaneKey(string icao) => $"plane_{icao}";
