@@ -17,6 +17,8 @@ public static partial class PlaneFrameDecoder
         var messageType = (byte)(frameBytes[0] >> 3);
         var typecodeValue = typecode(frame);
 
+        Console.WriteLine($"{frame}:{messageType}:{typecodeValue}");
+
         if (messageType == 0 || messageType == 4 || messageType == 16 || messageType == 20)
         {
             var altitude = decodeAC13Field(GetValue(GetBin(frame).Skip(40).Take(13)));
@@ -45,18 +47,18 @@ public static partial class PlaneFrameDecoder
 
             (float, float) latlon = (-1, -1);
 
-            // if (plane.TPos != 0 && (timestamp - plane.TPos) < 180)
-            // {
-            //     var rlat = plane.Latitude.Value;
-            //     var rlon = plane.Longitude.Value;
-            //     latlon = position_with_ref(message, rlat, rlon);
-            //     if (latlon is not (-1,-1))
-            //     {
-            //         Console.WriteLine($"{latlon}");
-            //     }
-            //     Console.WriteLine($"{rlat} => {latlon.Item1}");
-            // }
-            // else 
+            if (plane.TPos != 0 && (timestamp - plane.TPos) < 180)
+            {
+                var rlat = plane.Latitude.Value;
+                var rlon = plane.Longitude.Value;
+                latlon = position_with_ref(message, rlat, rlon);
+                // if (latlon is not (-1,-1))
+                // {
+                //     Console.WriteLine($"{latlon}");
+                // }
+                // Console.WriteLine($"{rlat} => {latlon.Item1}");
+            }
+            else 
             if (plane.PositionTimestamp[0] != 0 && plane.PositionTimestamp[1] != 0
                     && Math.Abs(plane.PositionTimestamp[0] - plane.PositionTimestamp[1]) < 10)
             {
@@ -132,12 +134,13 @@ public static partial class PlaneFrameDecoder
 
     private static (float, float) position_with_ref(ModeSMessage message, float lat_ref, float lon_ref)
     {
-        if (5 <= message.MessageType && message.MessageType <= 8)
+        var tc = typecode(message.Frame);
+        if (5 <= tc && tc <= 8)
         {
             return surface_position_with_ref(message.Frame, lat_ref, lon_ref);
         }
 
-        if ((9 <= message.MessageType && message.MessageType <= 18) || (20 <= message.MessageType && message.MessageType <= 22))
+        if ((9 <= tc && tc <= 18) || (20 <= tc && tc <= 22))
         {
             return airborne_position_with_ref(message.Frame, lat_ref, lon_ref);
         }

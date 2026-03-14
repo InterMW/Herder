@@ -32,7 +32,6 @@ public partial class PacketIngestorService(IPlaneRepository planeRepository, ICl
             //don't record duplicates
             return;
         }
-        //Console.WriteLine($"{now}:{frame}");
 
         await planeRepository.RecordPacket(frame, icao, (long)now);
         await planeRepository.MarkIcaoForMoment(icao,(long)now);
