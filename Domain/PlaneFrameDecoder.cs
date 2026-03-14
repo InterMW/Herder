@@ -15,10 +15,11 @@ public static partial class PlaneFrameDecoder
         var lat = plane.Latitude;
 
         var messageType = (byte)(frameBytes[0] >> 3);
+        var typecodeValue = typecode(frame);
 
         if (messageType == 0 || messageType == 4 || messageType == 16 || messageType == 20)
         {
-            var altitude = decodeAC13Field(GetValue(GetBin(frame).Skip(40).Take(12)));
+            var altitude = decodeAC13Field(GetValue(GetBin(frame).Skip(40).Take(13)));
             if (altitude >= 0)
             {
                 plane.Altitude = altitude;
@@ -36,7 +37,7 @@ public static partial class PlaneFrameDecoder
                 plane.SquawkValid = true;
             }
         }
-        if (messageType >= 5 && messageType <= 18)
+        if (messageType == 17 && typecodeValue >= 9 && typecodeValue <= 18 )
         {
             var oe = GetBin(frame)[53];
             plane.PositionMessage[oe] = frame;
@@ -60,12 +61,14 @@ public static partial class PlaneFrameDecoder
                     && Math.Abs(plane.PositionTimestamp[0] - plane.PositionTimestamp[1]) < 10)
             {
 
+
                 latlon = position(
                         plane.PositionMessage[0],
                         plane.PositionMessage[1],
                         plane.PositionTimestamp[0],
                         plane.PositionTimestamp[1]
                         );
+                //Console.WriteLine($"{plane.Longitude} => {latlon.Item2}\n{plane.Latitude} => {latlon.Item1}");
             }
 
 ;
@@ -139,6 +142,7 @@ public static partial class PlaneFrameDecoder
             return airborne_position_with_ref(message.Frame, lat_ref, lon_ref);
         }
 
+
         return (-1,-1);
     }
     static (float, float) airborne_position_with_ref(string frame, float lat_ref, float lon_ref)
@@ -165,7 +169,7 @@ public static partial class PlaneFrameDecoder
 
         var lon = d_lon * (m + cprlon);
 
-        Console.WriteLine($"{lat_ref - lat}");
+        Console.WriteLine($"airborne_position_with_ref{lat_ref - lat}");
 
         return ((float)lat, (float)lon);
     }
@@ -198,7 +202,7 @@ public static partial class PlaneFrameDecoder
         var m = Math.Floor(0.5 + lon_ref / d_lon - cprlon);
 
         var lon = d_lon * (m + cprlon);
-        Console.WriteLine($"{lat_ref - lat}");
+        Console.WriteLine($"surface_position_with_ref{lat_ref - lat}");
 
         return ((float)lat, (float)lon);
     }
