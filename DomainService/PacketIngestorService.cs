@@ -27,6 +27,11 @@ public partial class PacketIngestorService(IPlaneRepository planeRepository, ICl
             return;
         }
 
+        if(frame.StartsWith("8D"))
+        {
+        //    Console.WriteLine(frame);
+        }
+
         if (!await planeRepository.IsNewMessage(frame))
         {
             //don't record duplicates

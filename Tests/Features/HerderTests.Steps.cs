@@ -1,5 +1,6 @@
 using Application;
 using Application.Processor;
+using Domain;
 using DomainService;
 using Infrastructure.Redis;
 using MelbergFramework.ComponentTesting.Rabbit;
@@ -64,12 +65,26 @@ public partial class HerderTests : BaseTestFrame
         Assert.AreSame(registration,plane.Flight);
     }
 
-    public async Task Expect_Position(string icao, double lat, double lon)
+    public async Task Expect_Position(string icao, double lat, double lon, int altitude)
     {
 
         var plane = await GetPlaneRepository().GetPlane(icao);
+        Console.WriteLine($"{lat} vs {plane.Latitude.Value}");
+        Console.WriteLine($"{lon} vs {plane.Longitude.Value}");
+        Console.WriteLine($"{altitude} vs {plane.Altitude.Value}");
         Assert.IsTrue(Math.Abs(lat- plane.Latitude.Value) < 1);
         Assert.IsTrue(Math.Abs(lon - plane.Longitude.Value) < 1);
+        Assert.IsTrue(Math.Abs(altitude - plane.Altitude.Value) < 1);
+    }
+
+    public async Task VerifyCPR(string frame, int lat, int lon)
+    {
+        var (resultLat, resultLon) = PlaneFrameDecoder.ExtractCprLatLon(frame);
+
+        Assert.AreEqual(resultLon, lon);
+        Assert.AreEqual(resultLat, lat);
+
+        await Task.CompletedTask;
     }
 
     public async Task Expect_Squawk(string icao, string squawk)

@@ -98,7 +98,7 @@ public static partial class PlaneFrameDecoder
             case 20:
             case 21:
             case 22: // Airborne position, GNSS altitude (HAE or MSL)
-                decodeESAirbornePosition(mm, check_imf);
+                decodeESAirbornePosition(plane, mm, check_imf);
                 break;
 
             case 23:
@@ -144,7 +144,6 @@ public static partial class PlaneFrameDecoder
         mm.flight[5] = ais_charset[GetValue(bits.Skip(70).Take(6))];
         mm.flight[6] = ais_charset[GetValue(bits.Skip(76).Take(6))];
         mm.flight[7] = ais_charset[GetValue(bits.Skip(82).Take(6))];
-        mm.flight[8] = '\0';
 
         // A common failure mode seems to be to intermittently send
         // all zeros. Catch that here.
@@ -156,7 +155,7 @@ public static partial class PlaneFrameDecoder
 
 
     static string ais_charset = "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_ !\"#$%&'()*+,-./0123456789:;<=>?";
-    static void decodeESAirbornePosition(ModeSMessage mm, int check_imf)
+    static void decodeESAirbornePosition(Plane plane, ModeSMessage mm, int check_imf)
     {
         // Airborne position and altitude
 
@@ -168,7 +167,7 @@ public static partial class PlaneFrameDecoder
 
         if (AC12Field != 0)
         {// Only attempt to decode if a valid (non zero) altitude is present
-            mm.altitude = decodeAC12Field(AC12Field, mm.altitude_unit);
+            plane.Altitude = decodeAC12Field(AC12Field, mm.altitude_unit);
             if (mm.altitude != INVALID_ALTITUDE)
             {
                 mm.altitude_valid = true;

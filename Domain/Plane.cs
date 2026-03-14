@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 namespace Domain;
 
 public class Plane
@@ -14,7 +15,7 @@ public class Plane
     public int? Track {get; set;}
     public int? Speed {get; set;}
     public string Category {get; set;} = string.Empty;
-    public string[] PositionMessage = new string[2];
-    public long[] PositionTimestamp = new long[2] { 0, 0};
-    public long TPos;
+    public string[] PositionMessage { get; set; }= new string[2];
+    public long[] PositionTimestamp { get; set; }= new long[2] { 0, 0};
+    public long TPos { get; set; }
 }

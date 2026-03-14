@@ -22,10 +22,25 @@ public partial class HerderTests : BaseTestFrame
             _ => Expect_Registration("7C7181", "WPF"));
 
     }
+
     [Scenario]
     [TestMethod]
-    [DataRow("8D75804B580FF2CF7E9BA6F701D0","8D75804B580FF6B283EB7A157117", "75804B")]
-    public async Task ExtractPosition(string frame1, string frame2, string icao)
+    [DataRow("8D406F7658CD846B3DD4B1995879", false, 13726, 119985)]
+    public async Task SubPosition(string frame, bool isEven, int cprlat, int cprlon)
+    {
+        await Runner.RunScenarioAsync(
+            _ => Init_test(),
+            _ => Setup_scenarios(),
+            _ => VerifyCPR(frame, cprlat, cprlon)
+                );
+
+    }
+
+    [Scenario]
+    [TestMethod]
+    [DataRow("8D75804B580FF2CF7E9BA6F701D0","8D75804B580FF6B283EB7A157117", "75804B", 10.2162144, 123.889128 , 2175)]
+    [DataRow("8DA53774583B73A636A7835961B9","8DA53774583B77305323ACD94FC5", "A53774", 41.0, -87.0, 10775)]
+    public async Task ExtractPosition(string frame1, string frame2, string icao, double lat, double lon, int altitude)
     {
         await Runner.RunScenarioAsync(
             _ => Init_test(),
@@ -33,8 +48,8 @@ public partial class HerderTests : BaseTestFrame
             _ => Message_comes("device", $"5F{icao}BB4F87", 10),
             _ => Message_comes("device", frame1, 10),
             _ => Message_comes("device", frame2, 10),
-            _ => Clock_strikes(10),
-            _ => Expect_Position(icao, 10.2162144, 123.889128)
+            _ => Clock_strikes(13),
+            _ => Expect_Position(icao, lat, lon, altitude)
                 );
     }
 

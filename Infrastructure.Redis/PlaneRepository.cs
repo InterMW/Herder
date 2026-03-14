@@ -68,18 +68,26 @@ public class PlaneRepository : RedisRepository<PlaneContext>, IPlaneRepository
 
     public async Task<Plane> GetPlane(string icao)
     {
-        var result = await DB.StringGetAsync(icao);
+        var result = await DB.StringGetAsync(PlaneKey(icao));
 
         if (!result.HasValue)
         {
             return new Plane(){ HexValue = icao};
         }
 
+        Console.WriteLine($"never saw {icao}");
+
         return JsonSerializer.Deserialize<Plane>(result!)!;
     }
 
-    public Task UpdatePlane(Plane plane) =>
-        DB.StringSetAsync(plane.HexValue,JsonSerializer.Serialize<Plane>(plane));
+    public async Task UpdatePlane(Plane plane)
+    {
+        if(plane.PositionTimestamp.Any(_ => _ != 0))
+        {
+            //Console.WriteLine(JsonSerializer.Serialize<Plane>(plane));
+        }
+        await DB.StringSetAsync(PlaneKey(plane.HexValue),JsonSerializer.Serialize<Plane>(plane));
+    }
 
     private string PlaneKey(string icao) => $"plane_{icao}";
 
