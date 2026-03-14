@@ -27,6 +27,7 @@ public class PlaneFrameController(IPlaneRepository _service, IClock _clock)
                         Latitude = _.Latitude,
                         Longitude = _.Longitude,
                         Altitude = _.Altitude,
+                        Flight = _.Flight
                     }).ToArray(),
         };
     }
