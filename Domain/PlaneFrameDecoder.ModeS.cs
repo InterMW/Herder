@@ -61,6 +61,8 @@ public static partial class PlaneFrameDecoder
                     mm.addr |= MODES_NON_ICAO_ADDRESS; // assume non-ICAO
                     return;
             }
+
+            return;
         }
 
         switch (metype)
