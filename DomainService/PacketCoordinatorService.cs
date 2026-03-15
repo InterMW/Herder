@@ -41,16 +41,7 @@ public class PacketCoordindatorService(IPlaneRepository planeRepository): IPacke
         string packet;
         while (!string.IsNullOrEmpty(packet = await planeRepository.GetNextPacket(icao, time)))
         {
-            (float, float) currentlatlon = 
-            new (currentRecord.Latitude ?? -1, currentRecord.Longitude ?? -1);
             PlaneFrameDecoder.ApplyFrame( currentRecord, packet, time);
-            var newlatlon = (currentRecord.Latitude ?? -1, currentRecord.Longitude ?? -1);
-            if( newlatlon 
-                !=
-                currentlatlon)
-            {
-                Console.WriteLine(packet + " @ " + newlatlon);
-            }
         }
 
         await planeRepository.UpdatePlane(currentRecord);

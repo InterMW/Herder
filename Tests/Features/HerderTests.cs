@@ -25,6 +25,18 @@ public partial class HerderTests : BaseTestFrame
 
     [Scenario]
     [TestMethod]
+    [DataRow("8D40058B58C901375147EFD09357", 49.0f, 6.0f, 49.0f, 6.0f)]
+    public async Task PostitionWithRefTest(string frame, float reflat, float reflon, float expectlat, float expectlon)
+    {
+        await Runner.RunScenarioAsync(
+            _ => Init_test(),
+            _ => Setup_scenarios(),
+            _ => VerifyRefPos(frame, reflat, reflon, expectlat, expectlon)
+                );
+    }
+
+    [Scenario]
+    [TestMethod]
     [DataRow("8D406F7658CD846B3DD4B1995879", false, 13726, 119985)]
     [DataRow("8DA516F15823941B3B82DBE38987", false, 3485, 99035)]
     public async Task SubPosition(string frame, bool isEven, int cprlat, int cprlon)
@@ -64,7 +76,7 @@ public partial class HerderTests : BaseTestFrame
             _ => Setup_scenarios(),
             _ => Message_comes("device", $"5F{icao}BB4F87", 10),
             _ => Message_comes("device", frame, 10),
-            _ => Clock_strikes(10),
+            _ => Clock_strikes(13),
             _ => Expect_Squawk(icao, squawk)
                 );
     }
@@ -80,7 +92,7 @@ public partial class HerderTests : BaseTestFrame
             _ => Message_comes("device", $"5F{icao}BB4F87", 10),
             _ => Message_comes("device", "5F7C7B5ABB4F87", 10),
             _ => Message_comes("device", frame, 10),
-            _ => Clock_strikes(10),
+            _ => Clock_strikes(13),
             _ => Expect_Altitude(icao, altitude)
                 );
     }

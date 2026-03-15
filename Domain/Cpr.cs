@@ -65,7 +65,7 @@ public static class Cpr
         return res;
     }
 
-    static int cprNFunction(double lat, bool fflag)
+    public static int cprNFunction(double lat, bool fflag)
     {
         int nl = cprNLFunction(lat) - (fflag ? 1 : 0);
         if (nl < 1) nl = 1;

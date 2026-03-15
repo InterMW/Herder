@@ -60,32 +60,17 @@ public static partial class PlaneFrameDecoder
                     var rlon = plane.Longitude.Value;
 
                     latlon = position_with_ref(message, rlat, rlon);
-                    Console.WriteLine("Updating postition from old");
-
-                    if (latlon is not (-1,-1))
-                    {
-                        Console.WriteLine($"success {(rlat, rlon)} => {latlon}");
-                    }
-                    // Console.WriteLine($"{rlat} => {latlon.Item1}");
-                    //Console.WriteLine($"why {plane.HexValue} @ {plane.Latitude},{plane.Longitude}");
                 }
                 else
                 if (plane.PositionTimestamp[0] != 0 && plane.PositionTimestamp[1] != 0
                         && Math.Abs(plane.PositionTimestamp[0] - plane.PositionTimestamp[1]) < 10)
                 {
-                    Console.WriteLine("Updating postition from new");
-
                     latlon = position(
                             plane.PositionMessage[0],
                             plane.PositionMessage[1],
                             plane.PositionTimestamp[0],
                             plane.PositionTimestamp[1]
                             );
-                    if (latlon is not (-1,-1))
-                    {
-                        Console.WriteLine($"success {latlon}");
-                    }
-                    //Console.WriteLine($"{plane.Longitude} => {latlon.Item2}\n{plane.Latitude} => {latlon.Item1}");
                 }
 
                 if (latlon is not (-1, -1))
@@ -168,15 +153,10 @@ public static partial class PlaneFrameDecoder
             result = airborne_position_with_ref(message.Frame, lat_ref, lon_ref);
         }
 
-        if (result is not (-1, -1))
-        {
-            Console.WriteLine($"Success with {tc} => {result}");
-        }
-
         return result;
     }
 
-    static (float, float) airborne_position_with_ref(string frame, float lat_ref, float lon_ref)
+    public static (float, float) airborne_position_with_ref(string frame, float lat_ref, float lon_ref)
     {
         var binlist = GetBin(frame);
         
@@ -189,7 +169,7 @@ public static partial class PlaneFrameDecoder
         var d_lat = i == 1 ? 360 / 59 : 360 / 60;
         var j = Math.Floor(0.5 + lat_ref / d_lat - cprlat);
         var lat = d_lat * (j + cprlat);
-        var ni = cprNL((float)lat) - i;
+        var ni = Cpr.cprNFunction(lat,i==1);
 
         float d_lon;
         if (ni > 0)
@@ -200,10 +180,8 @@ public static partial class PlaneFrameDecoder
         {
             d_lon = 360;
         }
-        var m = Math.Floor(0.5 + lon_ref / d_lon - cprlon);
-
+        var m = (int)Math.Floor(0.5 + lon_ref / d_lon - cprlon);
         var lon = d_lon * (m + cprlon);
-
         return ((float)lat, (float)lon);
     }
 

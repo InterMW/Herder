@@ -77,6 +77,17 @@ public partial class HerderTests : BaseTestFrame
         Assert.IsTrue(Math.Abs(altitude - plane.Altitude.Value) < 1);
     }
 
+    public async Task VerifyRefPos(string frame, float reflat, float reflon, float expectlat, float expectlon)
+    {
+        var (resultLat, resultLon) = PlaneFrameDecoder.airborne_position_with_ref(frame, reflat, reflon);
+
+        Console.WriteLine($"{expectlon} vs {resultLon}");
+        Assert.IsTrue(Math.Abs(resultLat - expectlat) < 1);
+        Assert.IsTrue(Math.Abs(resultLon - expectlon) < 1);
+
+        await Task.CompletedTask;
+    }
+
     public async Task VerifyCPR(string frame, int lat, int lon)
     {
         var (resultLat, resultLon) = PlaneFrameDecoder.ExtractCprLatLon(frame);
