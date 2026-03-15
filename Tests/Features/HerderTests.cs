@@ -26,6 +26,7 @@ public partial class HerderTests : BaseTestFrame
     [Scenario]
     [TestMethod]
     [DataRow("8D40058B58C901375147EFD09357", 49.0f, 6.0f, 49.0f, 6.0f)]
+    [DataRow("8D06A15358BF17FF7D4A84B47B95", 30.508474576271183f, (float)(7.2*5.0+3e-15), 30.50540f, 33.447f)]
     public async Task PostitionWithRefTest(string frame, float reflat, float reflon, float expectlat, float expectlon)
     {
         await Runner.RunScenarioAsync(

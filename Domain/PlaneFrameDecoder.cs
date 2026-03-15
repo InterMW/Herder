@@ -54,7 +54,7 @@ public static partial class PlaneFrameDecoder
 
                 (float, float) latlon = (-1, -1);
 
-                if (plane.TPos != 0 && (timestamp - plane.TPos) < 180)
+                if (false && plane.TPos != 0 && (timestamp - plane.TPos) < 180)
                 {
                     var rlat = plane.Latitude.Value;
                     var rlon = plane.Longitude.Value;
