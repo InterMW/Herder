@@ -133,6 +133,7 @@ public static partial class PlaneFrameDecoder
     static void decodeESAirborneVelocity(Plane plane, string frame)
     {
 
+        Console.WriteLine("velo");
 
         var mb = GetBin(frame).Skip(32);
 
@@ -140,6 +141,7 @@ public static partial class PlaneFrameDecoder
 
         var velEW = GetValue(mb.Skip(14).Take(10));
         var velNS = GetValue(mb.Skip(25).Take(10));
+        Console.WriteLine(( velEW, velNS));
         if (velEW == 0 || velNS == 0)
             return;
 
