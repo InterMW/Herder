@@ -69,11 +69,11 @@ public static partial class PlaneFrameDecoder
             case 2:
             case 3:
             case 4:
-                decodeESIdentAndCategory(plane,mm);
+                decodeESIdentAndCategory(plane, mm);
                 break;
 
             case 19:
-                //decodeESAirborneVelocity(mm, check_imf);
+                decodeESAirborneVelocity(plane,mm.Frame);
                 break;
 
             case 5:
@@ -83,7 +83,7 @@ public static partial class PlaneFrameDecoder
                 //decodeESSurfacePosition(mm, check_imf);
                 break;
             // Airborne position, baro altitude only
-            case 0: 
+            case 0:
             // Airborne position, baro
             case 9:
             case 10:
@@ -94,7 +94,7 @@ public static partial class PlaneFrameDecoder
             case 15:
             case 16:
             case 17:
-            case 18: 
+            case 18:
             case 20:
             case 21:
             case 22: // Airborne position, GNSS altitude (HAE or MSL)
@@ -127,8 +127,90 @@ public static partial class PlaneFrameDecoder
                 break;
         }
     }
+
+    static void decodeESAirborneVelocity(Plane plane, string frame)
+    {
+
+
+        var mb = GetBin(frame).Skip(32);
+
+        var subtype = GetValue(mb.Skip(5).Take(3));
+
+        var velEW = GetValue(mb.Skip(14).Take(10));
+        var velNS = GetValue(mb.Skip(25).Take(10));
+        if (velEW == 0 || velNS == 0)
+            return;
+
+
+        if (subtype == 1 || subtype == 2)
+        {
+            var vEW_sign = mb.Skip(13).First() == 1 ? -1 : 1;
+            velEW -= 1;
+            if (subtype == 2)
+            {
+                velEW *= 4;
+            }
+            var vNS_sign = mb.Skip(24).First() == 1 ? -1 : 1;
+            velNS -= 1;
+            if (subtype == 2)
+            {
+                velNS *= 4;
+            }
+
+
+            var velSN = vNS_sign * velNS;
+            var velWE = vEW_sign * velEW;
+
+            var spd = (int)Math.Sqrt(velSN * velSN + velWE * velWE);
+
+            var trk = Double.RadiansToDegrees(Math.Atan2(velWE, velSN));
+
+            trk = trk + trk < 0 ? 360 : 0;
+
+            plane.Speed = spd;
+            plane.Track = (int)trk;
+        }
+    }
+    //         trk_or_hdg = trk
+
+    //     spd_type = "GS"
+    //     dir_type = "TRUE_NORTH"
+
+    // else:
+    //     if mb[13] == "0":
+    //         hdg = None
+    //     else:
+    //         hdg = common.bin2int(mb[14:24]) / 1024 * 360.0
+
+    //     trk_or_hdg = hdg
+
+    //     spd = common.bin2int(mb[25:35])
+    //     spd = None if spd == 0 else spd - 1
+    //     if subtype == 4 and spd is not None:  # Supersonic
+    //         spd *= 4
+
+    //     if mb[24] == "0":
+    //         spd_type = "IAS"
+    //     else:
+    //         spd_type = "TAS"
+
+    //     dir_type = "MAGNETIC_NORTH"
+
+    // vr_source = "GNSS" if mb[35] == "0" else "BARO"
+    // vr_sign = -1 if mb[36] == "1" else 1
+    // vr = common.bin2int(mb[37:46])
+    // vs = None if vr == 0 else int(vr_sign * (vr - 1) * 64)
+
+    // if source:
+    //     return spd, trk_or_hdg, vs, spd_type, dir_type, vr_source
+    // else:
+    //     return spd, trk_or_hdg, vs, spd_type
+    // }
+
+
     static void decodeESIdentAndCategory(Plane plane, ModeSMessage mm)
     {
+
         // Aircraft Identification and Category
 
         //mm.mesub = GetBits(mm.ME, 6, 8);
@@ -163,7 +245,7 @@ public static partial class PlaneFrameDecoder
         // setIMF(mm);
 
         int AC12Field = GetValue(GetBin(mm.Frame).Skip(40).Take(12));
-        
+
 
         if (AC12Field != 0)
         {// Only attempt to decode if a valid (non zero) altitude is present

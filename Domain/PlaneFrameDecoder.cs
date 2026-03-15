@@ -79,6 +79,7 @@ public static partial class PlaneFrameDecoder
                     plane.TPos = timestamp;
                     plane.Longitude = latlon.Item2;
                     plane.Latitude = latlon.Item1;
+                    plane.Altitude = 
                 }
             }
         }
