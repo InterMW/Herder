@@ -26,6 +26,7 @@ public partial class HerderTests : BaseTestFrame
     [Scenario]
     [TestMethod]
     [DataRow("8D406F7658CD846B3DD4B1995879", false, 13726, 119985)]
+    [DataRow("8DA516F15823941B3B82DBE38987", false, 3485, 99035)]
     public async Task SubPosition(string frame, bool isEven, int cprlat, int cprlon)
     {
         await Runner.RunScenarioAsync(
