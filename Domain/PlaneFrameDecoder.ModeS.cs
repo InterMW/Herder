@@ -169,7 +169,7 @@ public static partial class PlaneFrameDecoder
 
             var trk = Double.RadiansToDegrees(Math.Atan2(velWE, velSN));
 
-            trk = trk + trk < 0 ? 360 : 0;
+            trk = trk + (trk < 0 ? 360 : 0);
 
             plane.Speed = spd;
             plane.Track = (int)trk;
