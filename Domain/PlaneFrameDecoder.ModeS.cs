@@ -132,16 +132,12 @@ public static partial class PlaneFrameDecoder
 
     static void decodeESAirborneVelocity(Plane plane, string frame)
     {
-
-        Console.WriteLine("velo");
-
         var mb = GetBin(frame).Skip(32);
 
         var subtype = GetValue(mb.Skip(5).Take(3));
 
         var velEW = GetValue(mb.Skip(14).Take(10));
         var velNS = GetValue(mb.Skip(25).Take(10));
-        Console.WriteLine(( velEW, velNS));
         if (velEW == 0 || velNS == 0)
             return;
 
@@ -253,10 +249,15 @@ public static partial class PlaneFrameDecoder
 
         if (AC12Field != 0)
         {// Only attempt to decode if a valid (non zero) altitude is present
+            var alt = plane.Altitude;
             plane.Altitude = decodeAC12Field(AC12Field, mm.altitude_unit);
             if (mm.altitude != INVALID_ALTITUDE)
             {
                 mm.altitude_valid = true;
+            }
+            else 
+            {
+                Console.WriteLine("oops");
             }
 
             mm.altitude_source = (mm.metype == 20 || mm.metype == 21 || mm.metype == 22) ? AltitudeSource.ALTITUDE_GNSS : AltitudeSource.ALTITUDE_BARO;

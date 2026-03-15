@@ -27,7 +27,7 @@ public static partial class PlaneFrameDecoder
             var altitude = decodeAC13Field(GetValue(GetBin(frame).Skip(40).Take(13)));
             if (altitude >= 0)
             {
-                plane.Altitude = altitude;
+                //plane.Altitude = altitude;
             }
         }
         // ID (Identity)
