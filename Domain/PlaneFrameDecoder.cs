@@ -194,11 +194,11 @@ public static partial class PlaneFrameDecoder
         float d_lon;
         if (ni > 0)
         {
-            d_lon = 90 / ni;
+            d_lon = 360 / ni;
         }
         else
         {
-            d_lon = 90;
+            d_lon = 360;
         }
         var m = Math.Floor(0.5 + lon_ref / d_lon - cprlon);
 
@@ -211,8 +211,8 @@ public static partial class PlaneFrameDecoder
     {
         var binlist = GetBin(frame);
 
-        var cprlat = GetValue(binlist.Skip(54).Take(17)) / 131072;
-        var cprlon = GetValue(binlist.Skip(71).Take(17)) / 131072;
+        var cprlat = GetValue(binlist.Skip(54).Take(17)) / 131072.0;
+        var cprlon = GetValue(binlist.Skip(71).Take(17)) / 131072.0;
         var i = GetBin(frame)[53];
 
         var d_lat = i == 1 ? 90 / 59 : 90 / 60;
