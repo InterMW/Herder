@@ -30,7 +30,7 @@ public class PacketCoordindatorService(IPlaneRepository planeRepository): IPacke
 
         timer.Stop();
 
-        Console.WriteLine($"I FOUND {result.Count()}");
+        Console.WriteLine($"I FOUND {result.Count()} in {timer.ElapsedMilliseconds}");
         await planeRepository.SaveFrame(new SkyFrame(){ Timestamp = time, Planes = result.ToArray()});;
     }
 
@@ -41,13 +41,7 @@ public class PacketCoordindatorService(IPlaneRepository planeRepository): IPacke
         string packet;
         while (!string.IsNullOrEmpty(packet = await planeRepository.GetNextPacket(icao, time)))
         {
-            (float, float) oldpos = (currentRecord.Latitude ?? -1, currentRecord.Longitude ?? -1);
             PlaneFrameDecoder.ApplyFrame( currentRecord, packet, time);
-            (float, float) newpos = (currentRecord.Latitude ?? -1, currentRecord.Longitude ?? -1);
-            // if(oldpos != newpos)
-            // {
-            //     Console.WriteLine($"{icao}: {oldpos} => {newpos} {packet}");
-            // }
         }
 
         await planeRepository.UpdatePlane(currentRecord);
