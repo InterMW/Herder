@@ -15,14 +15,14 @@ public class AppRegistrator : Registrator
 {
     public override void RegisterServices(IServiceCollection services)
     {
+        var isDev = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
         RabbitModule.RegisterMicroConsumer<PacketProcessor, PacketMessage>(services, false);
-        RabbitModule.RegisterMicroConsumer<ClockProcessor, ClockMessage>(services, true);
-        // RabbitModule.RegisterMicroConsumer<TickProcessor, MelbergFramework.Infrastructure.Rabbit.Messages.TickMessage>(services, false);
-        // RabbitModule.RegisterMicroConsumer<WorkProcessor, MelbergFramework.Infrastructure.Rabbit.Messages.TickMessage>(services, true);
+        RabbitModule.RegisterMicroConsumer<ClockProcessor, ClockMessage>(services, !isDev);
         RabbitModule.RegisterPublisher<WorkMessage>(services);
+        RabbitModule.RegisterPublisher<CompletedPlaneFrameMessage>(services);
         services.AddTransient<IWorkMessagePublisher,WorkMessagePublisher>();
+        services.AddTransient<ICompletePlaneFramePublisher,CompletePlaneFramePublisher>();
         RedisDependencyModule.LoadRedisRepository<IPlaneRepository, PlaneRepository, PlaneContext>(services);
-//        services.AddTransient<IPacketDecoderService, PacketDecoderService>();
         services.AddTransient<IPacketIngestorService, PacketIngestorService>();
         services.AddTransient<IPacketCoordindatorService, PacketCoordindatorService>();
         services.AddSingleton<IClock, Clock>();

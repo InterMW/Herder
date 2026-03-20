@@ -13,7 +13,6 @@ public class PacketProcessor(
 {
     public async Task ConsumeMessageAsync(Message message, CancellationToken ct)
     {
-        // Console.WriteLine(message.Body);
         var dto = translator.Translate(message);
         try
         {

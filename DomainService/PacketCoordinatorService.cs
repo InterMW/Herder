@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using Domain;
+using Infrastructure.Rabbit.Publishers;
 using Infrastructure.Redis;
 
 namespace DomainService;
@@ -9,29 +9,18 @@ public interface IPacketCoordindatorService
     public Task Coordinate(long time);
 }
 
-public class PacketCoordindatorService(IPlaneRepository planeRepository): IPacketCoordindatorService
+public class PacketCoordindatorService(IPlaneRepository planeRepository, ICompletePlaneFramePublisher publisher): IPacketCoordindatorService
 {
     public async Task Coordinate(long time)
     {
-        //Find out what icao's have been seen
-        
-        var count = 0;
-        var timer = new Stopwatch();
-        timer.Start();
-
         var result = new List<Plane>();
-
         await foreach(var seen in planeRepository.GetIcaosForMoment(time))
         {
-            //Console.WriteLine($"starting coord of {seen}");
             result.Add(await ProcessAndUpdatePlane(seen, time));
-            count ++;
         }
-
-        timer.Stop();
-
-        Console.WriteLine($"I FOUND {result.Count()} in {timer.ElapsedMilliseconds}");
-        await planeRepository.SaveFrame(new SkyFrame(){ Timestamp = time, Planes = result.ToArray()});;
+        var frame =new SkyFrame(){ Timestamp = time, Planes = result.ToArray()};
+        await planeRepository.SaveFrame(frame);;
+        publisher.SendFrame(frame);
     }
 
 
@@ -71,8 +60,6 @@ public class PacketCoordindatorService(IPlaneRepository planeRepository): IPacke
 
         return icao;
     }
-
-
 
     public async Task<string> bruteForceAP(byte msgtype, string serialNumber, byte[] frameBytes)
     {
