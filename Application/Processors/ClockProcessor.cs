@@ -19,7 +19,6 @@ public class ClockProcessor(
         // Console.WriteLine(message.Body);
         var dto = translator.Translate(message);
         var now = (long)(clock.GetUtcNow()-DateTime.UnixEpoch).TotalSeconds;
-        Console.WriteLine($"Recieved for {now-3}");
         try
         {
             await domainService.Coordinate(now-3);

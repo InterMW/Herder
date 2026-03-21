@@ -7,34 +7,18 @@ public static partial class PlaneFrameDecoder
     public static void ApplyFrame(Plane plane, string frame, long timestamp)
     {
         var message = new ModeSMessage(frame);
-        var frameBytes = Enumerable
-                .Range(0, frame.Length / 2)
-                .Select(_ => (byte)(byte.Parse(frame.Substring(2 * _, 2), System.Globalization.NumberStyles.HexNumber)))
-                .ToArray();
+        var bin = GetBin(frame);
 
         var lat = plane.Latitude;
 
-        var messageType = (byte)(frameBytes[0] >> 3);
-        var typecodeValue = typecode(frame);
-        if (messageType == 17)
-        {
+        var messageType = GetValue(bin.Take(5));
+        var typecodeValue = GetValue(bin.Skip(32).Take(5));
 
-            //Console.WriteLine($"{frame}:{messageType}:{typecodeValue}");
-        }
-
-        if (messageType == 0 || messageType == 4 || messageType == 16 || messageType == 20)
-        {
-            var altitude = decodeAC13Field(GetValue(GetBin(frame).Skip(40).Take(13)));
-            if (altitude >= 0)
-            {
-                //plane.Altitude = altitude;
-            }
-        }
         // ID (Identity)
         if (messageType == 5 || messageType == 21)
         {
             // Gillham encoded Squawk
-            var id = GetBits(frame, 19, 31);
+            var id = GetValue(bin.Skip(19).Take(13));
             if (id != 0)
             {
 
@@ -48,7 +32,7 @@ public static partial class PlaneFrameDecoder
         {
             if (typecodeValue >= 9 && typecodeValue <= 18)
             {
-                var oe = GetBin(frame)[53];
+                var oe = bin[53];
                 plane.PositionMessage[oe] = frame;
                 plane.PositionTimestamp[oe] = timestamp;
 

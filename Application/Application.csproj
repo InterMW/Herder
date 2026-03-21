@@ -17,7 +17,7 @@
   <ItemGroup>
     <PackageReference Include="Device.GrpcClient" Version="8.0.48" />
     <PackageReference Include="MelbergFramework.Application" Version="8.0.10" />
-    <PackageReference Include="MelbergFramework.Infrastructure.InfluxDB" Version="8.0.2" />
+    <PackageReference Include="MelbergFramework.Infrastructure.InfluxDB" Version="8.0.3" />
     <PackageReference Include="MelbergFramework.Infrastructure.Rabbit" Version="8.0.15" />
   </ItemGroup>
 
@@ -26,6 +26,7 @@
     <ProjectReference Include="..\DomainService\DomainService.csproj" />
     <ProjectReference Include="..\Infrastructure.Redis\Infrastructure.Redis.csproj" />
     <ProjectReference Include="..\Infrastructure.Rabbit\Infrastructure.Rabbit.csproj" />
+    <ProjectReference Include="..\Infrastructure.InfluxDB\Infrastructure.InfluxDB.csproj" />
   </ItemGroup>
 
 </Project>

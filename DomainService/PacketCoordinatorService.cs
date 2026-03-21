@@ -1,6 +1,7 @@
 using Domain;
 using Infrastructure.Rabbit.Publishers;
 using Infrastructure.Redis;
+using Infrastructure.InfluxDB;
 
 namespace DomainService;
 
@@ -9,7 +10,10 @@ public interface IPacketCoordindatorService
     public Task Coordinate(long time);
 }
 
-public class PacketCoordindatorService(IPlaneRepository planeRepository, ICompletePlaneFramePublisher publisher): IPacketCoordindatorService
+public class PacketCoordindatorService(
+        IPlaneRepository planeRepository, 
+        ICompletePlaneFramePublisher publisher,
+        IPlaneMetadataRepository metadata): IPacketCoordindatorService
 {
     public async Task Coordinate(long time)
     {
@@ -19,10 +23,23 @@ public class PacketCoordindatorService(IPlaneRepository planeRepository, IComple
             result.Add(await ProcessAndUpdatePlane(seen, time));
         }
         var frame =new SkyFrame(){ Timestamp = time, Planes = result.ToArray()};
+
         await planeRepository.SaveFrame(frame);;
         publisher.SendFrame(frame);
+
+        await RecordMetadata(time, result.Count());
     }
 
+    private async Task RecordMetadata(long time, int totalCount)
+    {
+        var timestamp = DateTime.UnixEpoch.AddSeconds(time);
+        await foreach((string serialNumber, int count) in planeRepository.MessageCounts(time))
+        {
+            await metadata.LogNodeMetadata(serialNumber, count, timestamp);
+        }
+
+        await metadata.LogPlaneMetadata(totalCount, timestamp);
+    }
 
     private async Task<Plane> ProcessAndUpdatePlane(string icao, long time)
     {

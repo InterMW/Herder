@@ -477,11 +477,11 @@
           "Microsoft.AspNetCore.App"
         ]
       },
-      "MelbergFramework.Infrastructure.InfluxDB/8.0.2": {
+      "MelbergFramework.Infrastructure.InfluxDB/8.0.3": {
         "type": "package",
         "dependencies": {
           "InfluxDB.Client": "4.14.0",
-          "MelbergFramework.Core": "8.0.8",
+          "MelbergFramework.Core": "8.0.10",
           "Microsoft.Extensions.Configuration": "8.0.0",
           "Microsoft.Extensions.Options": "8.0.0",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "8.0.0",
@@ -2251,10 +2251,11 @@
           "Device.GrpcClient": "8.0.48",
           "Domain": "1.0.0",
           "DomainService": "1.0.0",
+          "Infrastructure.InfluxDB": "1.0.0",
           "Infrastructure.Rabbit": "1.0.0",
           "Infrastructure.Redis": "1.0.0",
           "MelbergFramework.Application": "8.0.10",
-          "MelbergFramework.Infrastructure.InfluxDB": "8.0.2",
+          "MelbergFramework.Infrastructure.InfluxDB": "8.0.3",
           "MelbergFramework.Infrastructure.Rabbit": "8.0.15"
         },
         "compile": {
@@ -2279,6 +2280,7 @@
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
           "Domain": "1.0.0",
+          "Infrastructure.InfluxDB": "1.0.0",
           "Infrastructure.Rabbit": "1.0.0",
           "Infrastructure.Redis": "1.0.0"
         },
@@ -2287,6 +2289,19 @@
         },
         "runtime": {
           "bin/placeholder/DomainService.dll": {}
+        }
+      },
+      "Infrastructure.InfluxDB/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "MelbergFramework.Infrastructure.InfluxDB": "8.0.3"
+        },
+        "compile": {
+          "bin/placeholder/Infrastructure.InfluxDB.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Infrastructure.InfluxDB.dll": {}
         }
       },
       "Infrastructure.Rabbit/1.0.0": {
@@ -3019,15 +3034,15 @@
         "melbergframework.core.componenttesting.nuspec"
       ]
     },
-    "MelbergFramework.Infrastructure.InfluxDB/8.0.2": {
-      "sha512": "m6JYfnWJtahs/Rx2ftEZs1yYnhHhydG2h73ISCUqnw/Y+t0v/3VGJTRHKCUQ2CfXyaKCHv7c/v+3Hcn5rwfCPQ==",
+    "MelbergFramework.Infrastructure.InfluxDB/8.0.3": {
+      "sha512": "GPOfXm/X+0SIJBWRfBgalkf/WuMMQrLX6/F/Oz7gwVKNKAw3psqMP/cV+OZMd8yDGKJDAavF0hFpqu5040Wg1g==",
       "type": "package",
-      "path": "melbergframework.infrastructure.influxdb/8.0.2",
+      "path": "melbergframework.infrastructure.influxdb/8.0.3",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "lib/net8.0/MelbergFramework.Infrastructure.InfluxDB.dll",
-        "melbergframework.infrastructure.influxdb.8.0.2.nupkg.sha512",
+        "melbergframework.infrastructure.influxdb.8.0.3.nupkg.sha512",
         "melbergframework.infrastructure.influxdb.nuspec"
       ]
     },
@@ -5897,6 +5912,11 @@
       "type": "project",
       "path": "../DomainService/DomainService.csproj",
       "msbuildProject": "../DomainService/DomainService.csproj"
+    },
+    "Infrastructure.InfluxDB/1.0.0": {
+      "type": "project",
+      "path": "../Infrastructure.InfluxDB/Infrastructure.InfluxDB.csproj",
+      "msbuildProject": "../Infrastructure.InfluxDB/Infrastructure.InfluxDB.csproj"
     },
     "Infrastructure.Rabbit/1.0.0": {
       "type": "project",

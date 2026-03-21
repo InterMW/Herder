@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Kd+sy0EEUfTop5bYrDxXl5UkDgXbm9unelCP0WCtfwSsEblhGCiCN5RPhQi8tLxfYaReq8r1CVIohmN8r4+fGA==",
+  "dgSpecHash": "g7EgUzHRjljHbImXaGxJK/YTyK6GBSUY2Vt3JjbXxCFHqNnjWCDvVTCQIiPczR340VxNQTbdFxc26Zkf/vRmNg==",
   "success": true,
   "projectFilePath": "/home/jbmelberg/Git/Herder/Application/Application.csproj",
   "expectedPackageFiles": [
@@ -25,7 +25,7 @@
     "/home/jbmelberg/.nuget/packages/jsonsubtypes/2.0.1/jsonsubtypes.2.0.1.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/melbergframework.application/8.0.10/melbergframework.application.8.0.10.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/melbergframework.core/8.0.10/melbergframework.core.8.0.10.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.influxdb/8.0.2/melbergframework.infrastructure.influxdb.8.0.2.nupkg.sha512",
+    "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.influxdb/8.0.3/melbergframework.infrastructure.influxdb.8.0.3.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.rabbit/8.0.15/melbergframework.infrastructure.rabbit.8.0.15.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.redis/8.0.19/melbergframework.infrastructure.redis.8.0.19.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",

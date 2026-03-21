@@ -18,6 +18,7 @@ public partial class PacketIngestorService(IPlaneRepository planeRepository, ICl
                 .Range(0,frame.Length/2)
                 .Select(_ => (byte)(byte.Parse(frame.Substring(2*_,2),System.Globalization.NumberStyles.HexNumber))).ToArray();
 
+        await planeRepository.IncrementCountForMoment(serialNumber,now);
         var messageType = (byte) (frameBytes[0]>>3);
 
         var icao = await ExtractIcao(messageType, serialNumber, frameBytes);
@@ -25,11 +26,6 @@ public partial class PacketIngestorService(IPlaneRepository planeRepository, ICl
         if (string.IsNullOrEmpty(icao))
         {
             return;
-        }
-
-        if(frame.StartsWith("8D"))
-        {
-        //    Console.WriteLine(frame);
         }
 
         if (!await planeRepository.IsNewMessage(frame))

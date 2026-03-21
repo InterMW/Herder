@@ -82,6 +82,9 @@
               "/home/jbmelberg/Git/Herder/Domain/Domain.csproj": {
                 "projectPath": "/home/jbmelberg/Git/Herder/Domain/Domain.csproj"
               },
+              "/home/jbmelberg/Git/Herder/Infrastructure.InfluxDB/Infrastructure.InfluxDB.csproj": {
+                "projectPath": "/home/jbmelberg/Git/Herder/Infrastructure.InfluxDB/Infrastructure.InfluxDB.csproj"
+              },
               "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj": {
                 "projectPath": "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj"
               },
@@ -100,6 +103,69 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.125/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/jbmelberg/Git/Herder/Infrastructure.InfluxDB/Infrastructure.InfluxDB.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/jbmelberg/Git/Herder/Infrastructure.InfluxDB/Infrastructure.InfluxDB.csproj",
+        "projectName": "Infrastructure.InfluxDB",
+        "projectPath": "/home/jbmelberg/Git/Herder/Infrastructure.InfluxDB/Infrastructure.InfluxDB.csproj",
+        "packagesPath": "/home/jbmelberg/.nuget/packages/",
+        "outputPath": "/home/jbmelberg/Git/Herder/Infrastructure.InfluxDB/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/jbmelberg/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/jbmelberg/Git/Herder/Domain/Domain.csproj": {
+                "projectPath": "/home/jbmelberg/Git/Herder/Domain/Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "MelbergFramework.Infrastructure.InfluxDB": {
+              "target": "Package",
+              "version": "[8.0.3, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

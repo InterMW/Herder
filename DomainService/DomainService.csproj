@@ -4,6 +4,7 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infrastructure.Redis\Infrastructure.Redis.csproj" />
     <ProjectReference Include="..\Infrastructure.Rabbit\Infrastructure.Rabbit.csproj" />
+    <ProjectReference Include="..\Infrastructure.InfluxDB\Infrastructure.InfluxDB.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

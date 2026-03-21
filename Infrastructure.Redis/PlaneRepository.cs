@@ -16,6 +16,8 @@ public interface IPlaneRepository
     Task<bool> ConfirmIcao(string node, string icao);
     Task RememberIcao(string node, string icao);
     Task RecordPacket(string packet, string icao, long time);
+    Task IncrementCountForMoment(string serialNumber, long time);
+    IAsyncEnumerable<(string serialNumber, int count)> MessageCounts(long time);
     Task MarkIcaoForMoment(string icao, long time);
     IAsyncEnumerable<string> GetIcaosForMoment(long time);
     Task<string> GetNextIcao(long time);
@@ -32,6 +34,24 @@ public class PlaneRepository : RedisRepository<PlaneContext>, IPlaneRepository
     private readonly TimeSpan _icaoLiftime = TimeSpan.FromSeconds(60);
 
     public PlaneRepository(PlaneContext context) : base(context) { }
+
+    public async Task IncrementCountForMoment(string serialNumber, long time)
+    {
+        var key = MessageCountKey(time);
+        await DB.HashIncrementAsync(key, serialNumber);
+        await DB.KeyExpireAsync(key, _icaoLiftime);
+    }
+
+    private static string MessageCountKey(long time) => $"message_count_{time}";
+
+    public async IAsyncEnumerable<(string serialNumber, int count)> MessageCounts(long time)
+    {
+        var key = MessageCountKey(time);
+        await foreach (var result in DB.HashScanAsync(key))
+        {
+            yield return (result.Name!, int.Parse(result.Value!));//works?
+        }
+    }
 
     public async Task<bool> IsNewMessage(string frame)
     {

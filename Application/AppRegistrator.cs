@@ -1,10 +1,12 @@
 using Application.Processor;
 using DomainService;
+using Infrastructure.InfluxDB;
 using Infrastructure.Rabbit.Publishers;
 using Infrastructure.Redis;
 using Infrastructure.Redis.Contexts;
 using MelbergFramework.Application;
 using MelbergFramework.Core.Time;
+using MelbergFramework.Infrastructure.InfluxDB;
 using MelbergFramework.Infrastructure.Rabbit;
 using MelbergFramework.Infrastructure.Redis;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +28,7 @@ public class AppRegistrator : Registrator
         services.AddTransient<IPacketIngestorService, PacketIngestorService>();
         services.AddTransient<IPacketCoordindatorService, PacketCoordindatorService>();
         services.AddSingleton<IClock, Clock>();
+        InfluxDBDependencyModule.LoadInfluxDBRepository<IPlaneMetadataRepository,PlaneFrameMetadataRepository,InfluxDBContext>(services);
     }
 }
 

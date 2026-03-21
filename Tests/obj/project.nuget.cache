@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "+/ed5NieqG9osesli5Rjr3g5SGZH/Wept4+hpb7vAgTlp6F6P86GbAFjLUZLTtLdS/Vei10icHpqeXwOTEVkUQ==",
+  "dgSpecHash": "SrYevDI8zUJdRDzJPQT/umb8ywZ0VlKtJu1OpCkUNhLNOg4xxnmpOJ2XMWvws2Ib/OtysW9ps3xmMA9GeQKXuA==",
   "success": true,
   "projectFilePath": "/home/jbmelberg/Git/Herder/Tests/Tests.csproj",
   "expectedPackageFiles": [
@@ -36,7 +36,7 @@
     "/home/jbmelberg/.nuget/packages/melbergframework.componenttesting.redis/8.0.19/melbergframework.componenttesting.redis.8.0.19.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/melbergframework.core/8.0.10/melbergframework.core.8.0.10.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/melbergframework.core.componenttesting/8.0.10/melbergframework.core.componenttesting.8.0.10.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.influxdb/8.0.2/melbergframework.infrastructure.influxdb.8.0.2.nupkg.sha512",
+    "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.influxdb/8.0.3/melbergframework.infrastructure.influxdb.8.0.3.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.rabbit/8.0.15/melbergframework.infrastructure.rabbit.8.0.15.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/melbergframework.infrastructure.redis/8.0.19/melbergframework.infrastructure.redis.8.0.19.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/microsoft.codecoverage/17.9.0/microsoft.codecoverage.17.9.0.nupkg.sha512",
