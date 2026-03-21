@@ -26,13 +26,12 @@ public class PacketCoordindatorService(
         }
 
         var resultList = await Task.WhenAll(resultTasks);
-        // var frame =new SkyFrame(){ Timestamp = time, Planes = result.ToArray()};
         var frame =new SkyFrame(){ Timestamp = time, Planes = resultList};
 
-        await planeRepository.SaveFrame(frame);
+        await planeRepository.SaveFrame(frame);;
         publisher.SendFrame(frame);
 
-        await RecordMetadata(time, result.Count());
+        await RecordMetadata(time, resultList.Count());
     }
 
     private async Task RecordMetadata(long time, int totalCount)
