@@ -5,7 +5,8 @@ public static partial class PlaneFrameDecoder
     public static uint MODES_NON_ICAO_ADDRESS = 1 << 24;
     static void decodeExtendedSquitter(Plane plane, ModeSMessage mm)
     {
-        var metype = GetValue(GetBin(mm.Frame).Skip(32).Take(5));
+        var frameBin = GetBin(mm.Frame);
+        var metype = GetValue(frameBin.Skip(32).Take(5));
         mm.ME = mm.Frame.Substring(4 * 2, 7 * 2);
         var check_imf = 0;
 

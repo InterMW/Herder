@@ -43,7 +43,7 @@ public static partial class PlaneFrameDecoder
                     var rlat = plane.Latitude.Value;
                     var rlon = plane.Longitude.Value;
 
-                    latlon = position_with_ref(message, rlat, rlon);
+                    latlon = position_with_ref(bin, rlat, rlon);
                 }
                 else
                 if (plane.PositionTimestamp[0] != 0 && plane.PositionTimestamp[1] != 0
@@ -75,8 +75,8 @@ public static partial class PlaneFrameDecoder
 
     static (float, float) position(string msg0, string msg1, long t0, long t1)
     {
-        var tc0 = typecode(msg0);
-        var tc1 = typecode(msg1);
+        var tc0 = typecode(GetBin(msg0));
+        var tc1 = typecode(GetBin(msg1));
         if (9 <= tc0 && tc0 <= 18 && 9 <= tc1 && tc1 <= 18)
         {
             return airborne_position(msg0, msg1, t0, t1);
@@ -118,38 +118,31 @@ public static partial class PlaneFrameDecoder
         return (cprlat, cprlon);
     }
 
-    static int Extract(string frame, int bitStart, int bitEnd) => GetValue(GetBin(frame).Skip(bitStart).Take(bitEnd - bitStart));
 
+    static int typecode(int[] frameBin) => GetValue(frameBin.Skip(32).Take(5));
 
-    static int typecode(string frame) => GetValue(GetBin(frame).Skip(32).Take(5));
-
-    private static (float, float) position_with_ref(ModeSMessage message, float lat_ref, float lon_ref)
+    private static (float, float) position_with_ref(int[] frameBin, float lat_ref, float lon_ref)
     {
-        var tc = typecode(message.Frame);
+        var tc = GetValue(frameBin.Skip(32).Take(5));
         (float, float) result = (-1, -1);
         if (5 <= tc && tc <= 8)
         {
-            result = surface_position_with_ref(message.Frame, lat_ref, lon_ref);
+            result = surface_position_with_ref(frameBin, lat_ref, lon_ref);
         }
 
         if ((9 <= tc && tc <= 18) || (20 <= tc && tc <= 22))
         {
-            result = airborne_position_with_ref(message.Frame, lat_ref, lon_ref);
+            result = airborne_position_with_ref(frameBin, lat_ref, lon_ref);
         }
 
         return result;
     }
 
-    public static (float, float) airborne_position_with_ref(string frame, float lat_ref, float lon_ref)
+    public static (float, float) airborne_position_with_ref(int[] frameBin, float lat_ref, float lon_ref)
     {
-        var binlist = GetBin(frame);
-        
-        //var whatthe = binlist.Skip(54).Take(17);
-        //var something = GetValue(whatthe);
-        //Console.WriteLine($"{something} is?");
-        var cprlat = GetValue(binlist.Skip(54).Take(17)) / 131072.0;
-        var cprlon = GetValue(binlist.Skip(71).Take(17)) / 131072.0;
-        var i = GetBin(frame)[53];
+        var cprlat = GetValue(frameBin.Skip(54).Take(17)) / 131072.0;
+        var cprlon = GetValue(frameBin.Skip(71).Take(17)) / 131072.0;
+        var i = frameBin[53];
         var d_lat = i == 1 ? 360 / 59 : 360 / 60;
         var j = Math.Floor(0.5 + lat_ref / d_lat - cprlat);
         var lat = d_lat * (j + cprlat);
@@ -169,13 +162,12 @@ public static partial class PlaneFrameDecoder
         return ((float)lat, (float)lon);
     }
 
-    private static (float, float) surface_position_with_ref(string frame, float lat_ref, float lon_ref)
+    private static (float, float) surface_position_with_ref(int[] frameBin, float lat_ref, float lon_ref)
     {
-        var binlist = GetBin(frame);
 
-        var cprlat = GetValue(binlist.Skip(54).Take(17)) / 131072.0;
-        var cprlon = GetValue(binlist.Skip(71).Take(17)) / 131072.0;
-        var i = GetBin(frame)[53];
+        var cprlat = GetValue(frameBin.Skip(54).Take(17)) / 131072.0;
+        var cprlon = GetValue(frameBin.Skip(71).Take(17)) / 131072.0;
+        var i = frameBin[53];
 
         var d_lat = i == 1 ? 90 / 59 : 90 / 60;
 
@@ -361,7 +353,7 @@ public static partial class PlaneFrameDecoder
     // private static bool ExtractVerticalStatus(Span<byte> bytes) => bytes[]
 
 
-    static int[] GetBin(string frame) => frame
+    public static int[] GetBin(string frame) => frame
             .Select(_ => int.Parse($"{_}", System.Globalization.NumberStyles.HexNumber))
             .Select(_ => string.Format("{0:b4}", _))
             .SelectMany(_ => _)

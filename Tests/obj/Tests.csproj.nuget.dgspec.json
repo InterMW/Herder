@@ -231,7 +231,11 @@
         "frameworks": {
           "net8.0": {
             "targetAlias": "net8.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "/home/jbmelberg/Git/Herder/Domain/Domain.csproj": {
+                "projectPath": "/home/jbmelberg/Git/Herder/Domain/Domain.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
