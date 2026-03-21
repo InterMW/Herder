@@ -18,13 +18,18 @@ public class PacketCoordindatorService(
     public async Task Coordinate(long time)
     {
         var result = new List<Plane>();
+        var resultTasks = new List<Task<Plane>>();
         await foreach(var seen in planeRepository.GetIcaosForMoment(time))
         {
-            result.Add(await ProcessAndUpdatePlane(seen, time));
+            resultTasks.Add(ProcessAndUpdatePlane(seen, time));
+            // result.Add(await ProcessAndUpdatePlane(seen, time));
         }
-        var frame =new SkyFrame(){ Timestamp = time, Planes = result.ToArray()};
 
-        await planeRepository.SaveFrame(frame);;
+        var resultList = await Task.WhenAll(resultTasks);
+        // var frame =new SkyFrame(){ Timestamp = time, Planes = result.ToArray()};
+        var frame =new SkyFrame(){ Timestamp = time, Planes = resultList};
+
+        await planeRepository.SaveFrame(frame);
         publisher.SendFrame(frame);
 
         await RecordMetadata(time, result.Count());
