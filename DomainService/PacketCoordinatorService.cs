@@ -2,6 +2,7 @@ using Domain;
 using Infrastructure.Rabbit.Publishers;
 using Infrastructure.Redis;
 using Infrastructure.InfluxDB;
+using Domain.MessageStrategy;
 
 namespace DomainService;
 
@@ -11,6 +12,7 @@ public interface IPacketCoordindatorService
 }
 
 public class PacketCoordindatorService(
+        IMessageDecoder decoder,
         IPlaneRepository planeRepository, 
         ICompletePlaneFramePublisher publisher,
         IPlaneMetadataRepository metadata): IPacketCoordindatorService
@@ -48,10 +50,11 @@ public class PacketCoordindatorService(
     private async Task<Plane> ProcessAndUpdatePlane(string icao, long time)
     {
         var currentRecord = await planeRepository.GetPlane(icao);
+        currentRecord.LastUpdate = time;
         string packet;
         while (!string.IsNullOrEmpty(packet = await planeRepository.GetNextPacket(icao, time)))
         {
-            PlaneFrameDecoder.ApplyFrame( currentRecord, packet, time);
+            decoder.DecodeMessage(currentRecord, packet);
         }
 
         await planeRepository.UpdatePlane(currentRecord);
@@ -63,7 +66,6 @@ public class PacketCoordindatorService(
     {
         var now = DateTime.UtcNow;
         string icao;
-        //Console.WriteLine(messageType.ToString("x2"));
         switch (messageType)
         {
             case 11:
@@ -71,8 +73,6 @@ public class PacketCoordindatorService(
             case 18:
                 icao = ((frameBytes[1] << 16) | (frameBytes[2] << 8) | (frameBytes[3])).ToString("X6");
                 await planeRepository.RememberIcao(serialNumber, icao);
-                //Console.WriteLine($"I saw {icao}");
-
                 break;
             default:
                 icao = await bruteForceAP(messageType, serialNumber, frameBytes);

@@ -4,6 +4,10 @@ public static partial class PlaneFrameDecoder
 {
     public static int INVALID_ALTITUDE = -9999;
 
+    public static int ExtractValue(int[] bin, int start, int length) =>
+        GetValue(bin.Skip(start).Take(length));
+
+
     public static void ApplyFrame(Plane plane, string frame, long timestamp)
     {
         var message = new ModeSMessage(frame);
@@ -27,45 +31,6 @@ public static partial class PlaneFrameDecoder
             }
         }
 
-
-        if (messageType == 17)
-        {
-            if (typecodeValue >= 9 && typecodeValue <= 18)
-            {
-                var oe = bin[53];
-                plane.PositionMessage[oe] = frame;
-                plane.PositionTimestamp[oe] = timestamp;
-
-                (float, float) latlon = (-1, -1);
-
-                if (false && plane.TPos != 0 && (timestamp - plane.TPos) < 180)
-                {
-                    var rlat = plane.Latitude.Value;
-                    var rlon = plane.Longitude.Value;
-
-                    latlon = position_with_ref(bin, rlat, rlon);
-                }
-                else
-                if (plane.PositionTimestamp[0] != 0 && plane.PositionTimestamp[1] != 0
-                        && Math.Abs(plane.PositionTimestamp[0] - plane.PositionTimestamp[1]) < 10)
-                {
-                    latlon = position(
-                            plane.PositionMessage[0],
-                            plane.PositionMessage[1],
-                            plane.PositionTimestamp[0],
-                            plane.PositionTimestamp[1]
-                            );
-                }
-
-                if (latlon is not (-1, -1))
-                {
-                    //Console.WriteLine($"{plane.HexValue} @ {plane.Latitude},{plane.Longitude}");
-                    plane.TPos = timestamp;
-                    plane.Longitude = latlon.Item2;
-                    plane.Latitude = latlon.Item1;
-                }
-            }
-        }
 
         if (messageType == 17 || messageType == 18)
         {
@@ -270,7 +235,7 @@ public static partial class PlaneFrameDecoder
 
         return ((FiveHundreds * 5) + OneHundreds - 13);
     }
-    static int decodeID13Field(int ID13Field)
+    public static int decodeID13Field(int ID13Field)
     {
         int hexGillham = 0;
 
@@ -295,7 +260,7 @@ public static partial class PlaneFrameDecoder
     // Decode the 13 bit AC altitude field (in DF 20 and others).
     // Returns the altitude, and set 'unit' to either UNIT_METERS or UNIT_FEET.
     //
-    static int decodeAC13Field(int AC13Field)
+    public static int decodeAC13Field(int AC13Field)
     {
         int m_bit = AC13Field & 0x0040; // set = meters, clear = feet
         int q_bit = AC13Field & 0x0010; // set = 25 ft encoding, clear = Gillham Mode C encoding

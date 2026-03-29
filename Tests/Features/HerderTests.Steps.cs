@@ -10,6 +10,7 @@ using MelbergFramework.Infrastructure.Rabbit.Extensions;
 using MelbergFramework.Infrastructure.Rabbit.Messages;
 using MelbergFramework.Infrastructure.Rabbit.Translator;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -62,7 +63,7 @@ public partial class HerderTests : BaseTestFrame
     {
         var plane = await GetPlaneRepository().GetPlane(icao);
         Console.Write(plane.Flight + ":" + registration);
-        Assert.AreSame(registration,plane.Flight);
+        Assert.AreSame(registration, plane.Flight);
     }
 
     public async Task Expect_Position(string icao, double lat, double lon, int altitude)
@@ -72,7 +73,7 @@ public partial class HerderTests : BaseTestFrame
         Console.WriteLine($"{lat} vs {plane.Latitude.Value}");
         Console.WriteLine($"{lon} vs {plane.Longitude.Value}");
         Console.WriteLine($"{altitude} vs {plane.Altitude.Value}");
-        Assert.IsTrue(Math.Abs(lat- plane.Latitude.Value) < 1);
+        Assert.IsTrue(Math.Abs(lat - plane.Latitude.Value) < 1);
         Assert.IsTrue(Math.Abs(lon - plane.Longitude.Value) < 1);
         Assert.IsTrue(Math.Abs(altitude - plane.Altitude.Value) < 1);
     }
@@ -119,8 +120,26 @@ public partial class HerderTests : BaseTestFrame
         var mockClock = (MockClock)this.GetClass<IClock>();
         mockClock.NewCurrentTime = DateTime.UnixEpoch.AddSeconds(second);
         var mockTranslator = (MockTranslator<ClockMessage>)GetClass<IJsonToObjectTranslator<ClockMessage>>();
-        mockTranslator.Messages.Add(new ClockMessage() { Time = second});
-        await GetClockService().ConsumeMessageAsync(new Message(), CancellationToken.None);
+        mockTranslator.Messages.Add(new ClockMessage() { Time = second });
+        Console.WriteLine("Hello");
+        var j  = new Message();
+        Console.WriteLine(j.Headers.Count());
+        try
+        {
+        var whuh = (ClockProcessor)App
+            .Services
+            .GetService<ClockProcessor>()!;
+            
+        Console.WriteLine(whuh is not null ? "helloooo" : "what");
+        var serve = GetClockService();
+
+            await serve.ConsumeMessageAsync(new Message(), CancellationToken.None);
+        }
+        catch (System.Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+        Console.WriteLine("tello");
     }
 
     public async Task Icao_was_not_seen(string device, string icao)

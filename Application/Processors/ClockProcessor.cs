@@ -15,9 +15,6 @@ public class ClockProcessor(
 {
     public async Task ConsumeMessageAsync(Message message, CancellationToken ct)
     {
-
-        // Console.WriteLine(message.Body);
-        var dto = translator.Translate(message);
         var now = (long)(clock.GetUtcNow()-DateTime.UnixEpoch).TotalSeconds;
         try
         {
@@ -27,6 +24,7 @@ public class ClockProcessor(
         catch (System.Exception ex)
         {
 
+            Console.WriteLine(ex);
             Console.WriteLine(ex);
         }
     }

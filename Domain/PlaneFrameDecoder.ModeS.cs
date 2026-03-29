@@ -65,70 +65,6 @@ public static partial class PlaneFrameDecoder
 
             return;
         }
-
-        switch (metype)
-        {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-                decodeESIdentAndCategory(plane, mm);
-                break;
-
-            case 19:
-                decodeESAirborneVelocity(plane,mm.Frame);
-                break;
-
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-                //decodeESSurfacePosition(mm, check_imf);
-                break;
-            // Airborne position, baro altitude only
-            case 0:
-            // Airborne position, baro
-            case 9:
-            case 10:
-            case 11:
-            case 12:
-            case 13:
-            case 14:
-            case 15:
-            case 16:
-            case 17:
-            case 18:
-            case 20:
-            case 21:
-            case 22: // Airborne position, GNSS altitude (HAE or MSL)
-                decodeESAirbornePosition(plane, mm, check_imf);
-                break;
-
-            case 23:
-                // decodeESTestMessage(mm);
-                break;
-
-            case 24: // Reserved for Surface System Status
-                break;
-
-            case 28:
-                // decodeESAircraftStatus(mm, check_imf);
-                break;
-
-            case 29:
-                // decodeESTargetStatus(mm, check_imf);
-                break;
-
-            case 30: // Aircraft Operational Coordination
-                break;
-
-            case 31:
-                // decodeESOperationalStatus(mm, check_imf);
-                break;
-
-            default:
-                break;
-        }
     }
 
     static void decodeESAirborneVelocity(Plane plane, string frame)
@@ -208,36 +144,6 @@ public static partial class PlaneFrameDecoder
     //     return spd, trk_or_hdg, vs, spd_type
     // }
 
-
-    static void decodeESIdentAndCategory(Plane plane, ModeSMessage mm)
-    {
-
-        // Aircraft Identification and Category
-
-        //mm.mesub = GetBits(mm.ME, 6, 8);
-
-        var bits = GetBin(mm.Frame);
-
-        mm.aircraft_type = mm.metype - 1;
-        mm.flight[0] = ais_charset[GetValue(bits.Skip(40).Take(6))];
-        mm.flight[1] = ais_charset[GetValue(bits.Skip(46).Take(6))];
-        mm.flight[2] = ais_charset[GetValue(bits.Skip(52).Take(6))];
-        mm.flight[3] = ais_charset[GetValue(bits.Skip(58).Take(6))];
-        mm.flight[4] = ais_charset[GetValue(bits.Skip(64).Take(6))];
-        mm.flight[5] = ais_charset[GetValue(bits.Skip(70).Take(6))];
-        mm.flight[6] = ais_charset[GetValue(bits.Skip(76).Take(6))];
-        mm.flight[7] = ais_charset[GetValue(bits.Skip(82).Take(6))];
-
-        // A common failure mode seems to be to intermittently send
-        // all zeros. Catch that here.
-
-        plane.Flight = string.Join("", mm.flight);
-        mm.category = ((0x0E - mm.metype) << 4) | mm.mesub;
-        mm.callsign_valid = true;//(strcmp(mm.callsign, "@@@@@@@@") != 0);
-    }
-
-
-    static string ais_charset = "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_ !\"#$%&'()*+,-./0123456789:;<=>?";
     static void decodeESAirbornePosition(Plane plane, ModeSMessage mm, int check_imf)
     {
         // Airborne position and altitude
@@ -251,7 +157,7 @@ public static partial class PlaneFrameDecoder
         if (AC12Field != 0)
         {// Only attempt to decode if a valid (non zero) altitude is present
             var alt = plane.Altitude;
-            plane.Altitude = decodeAC12Field(AC12Field, mm.altitude_unit);
+            plane.Altitude = decodeAC12Field(AC12Field);
             if (mm.altitude != INVALID_ALTITUDE)
             {
                 mm.altitude_valid = true;
@@ -265,11 +171,10 @@ public static partial class PlaneFrameDecoder
         }
     }
 
-    static int decodeAC12Field(int AC12Field, AltitudeUnit unit)
+    public static int decodeAC12Field(int AC12Field)
     {
         int q_bit = AC12Field & 0x10; // Bit 48 = Q
 
-        unit = AltitudeUnit.UNIT_FEET;
         if (q_bit != 0)
         {
             /// N is the 11 bit integer resulting from the removal of bit Q at bit 4
