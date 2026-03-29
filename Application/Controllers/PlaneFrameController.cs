@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Domain;
 using Infrastructure.Redis;
 using MelbergFramework.Core.Time;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +30,7 @@ public class PlaneFrameController(IPlaneRepository _service, IClock _clock)
                         Track = _.Track,
                         Speed = _.Speed,
                         Squawk = _.Squawk,
+                        Category = _.Category,
 
                     }).ToArray(),
         };

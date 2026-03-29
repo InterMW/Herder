@@ -9,6 +9,7 @@ using MelbergFramework.ComponentTesting.Redis;
 using MelbergFramework.Core.ComponentTesting;
 using MelbergFramework.Core.DependencyInjection;
 using MelbergFramework.Core.Time;
+using MelbergFramework.Infrastructure.Rabbit.Consumers;
 using MelbergFramework.Infrastructure.Rabbit.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,9 +25,11 @@ public class BaseTestFrame : FeatureFixture
             .AddServices(_ =>
             {
                 _.OverrideRedisContext<PlaneContext>();
+                _.AddSingleton<ClockProcessor,ClockProcessor>();
                 // _.OverrideCouchbaseDatabase();
                 _.PrepareConsumer<ClockProcessor>();
                 _.OverrideTranslator<ClockMessage>();
+                
                 _.PrepareConsumer<PacketProcessor>();
                 _.OverrideTranslator<PacketMessage>();
                 _.OverrideWithSingleton<IClock, MockClock>();
@@ -47,12 +50,10 @@ public class BaseTestFrame : FeatureFixture
     public IPlaneRepository GetPlaneRepository() =>
         App.Services.GetService<IPlaneRepository>()!;
 
-    public RabbitMicroService<ClockProcessor> GetClockService() =>
-        (RabbitMicroService<ClockProcessor>)App
+    public ClockProcessor GetClockService() =>
+        (ClockProcessor)App
             .Services
-            .GetServices<IHostedService>()
-            .Where(_ => _.GetType() == typeof(RabbitMicroService<ClockProcessor>))
-            .First();
+            .GetService<ClockProcessor>()!;
 
     public RabbitMicroService<PacketProcessor> GetPacketService() =>
         (RabbitMicroService<PacketProcessor>)App
