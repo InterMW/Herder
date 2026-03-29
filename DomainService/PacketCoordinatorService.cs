@@ -14,12 +14,11 @@ public interface IPacketCoordindatorService
 public class PacketCoordindatorService(
         IMessageDecoder decoder,
         IPlaneRepository planeRepository, 
-        // ICompletePlaneFramePublisher publisher,
+        ICompletePlaneFramePublisher publisher,
         IPlaneMetadataRepository metadata): IPacketCoordindatorService
 {
     public async Task Coordinate(long time)
     {
-        Console.WriteLine("Coord");
         var result = new List<Plane>();
         var resultTasks = new List<Task<Plane>>();
         await foreach(var seen in planeRepository.GetIcaosForMoment(time))
