@@ -122,8 +122,7 @@ public partial class Strategy17 : IMessageStrategy
         // A common failure mode seems to be to intermittently send
         // all zeros. Catch that here.
 
-
-        if (string.Compare(flight, "@@@@@@@@") == 0)
+        if (string.Compare(flight, "@@@@@@@@") != 0)
         {
             plane.Flight = flight;
             var mesub = PlaneFrameDecoder.ExtractValue(binary, 37, 3);
