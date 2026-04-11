@@ -126,7 +126,7 @@ public partial class Strategy17 : IMessageStrategy
         {
             plane.Flight = flight;
             var mesub = PlaneFrameDecoder.ExtractValue(binary, 37, 3);
-            plane.Category = string.Format("{0:x4}", ((0x0E - metype) << 4) | mesub);
+            plane.Category = string.Format("{0:X2}", ((0x0E - metype) << 4) | mesub);
         }
     }
 
