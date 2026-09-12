@@ -7,8 +7,8 @@ public class Strategy00 : IMessageStrategy
     public void Interpret(Plane plane, int[] binary)
     {
         var ac = PlaneFrameDecoder.ExtractValue(binary,20,12);
-
-        if (ac != 0)
+        //Don't know why this isn't working
+        if (false && ac != 0)
         {
             plane.Altitude = PlaneFrameDecoder.decodeAC12Field(ac);
         }
