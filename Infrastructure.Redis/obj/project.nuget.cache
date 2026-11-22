@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "lWHzdt8RwHslQPizkixMmrZDKjvXNW+dEwWCOLvtaUQDcZNPyFqnnqPIAV9PMi/vQ9UeNq989DqPaavZovqYRg==",
+  "dgSpecHash": "x1TAKW/nIrM=",
   "success": true,
   "projectFilePath": "/home/jbmelberg/Git/Herder/Infrastructure.Redis/Infrastructure.Redis.csproj",
   "expectedPackageFiles": [
@@ -36,12 +36,8 @@
     "/home/jbmelberg/.nuget/packages/microsoft.extensions.primitives/8.0.0/microsoft.extensions.primitives.8.0.0.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/pipelines.sockets.unofficial/2.2.8/pipelines.sockets.unofficial.2.2.8.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/stackexchange.redis/2.10.1/stackexchange.redis.2.10.1.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/system.diagnostics.diagnosticsource/8.0.0/system.diagnostics.diagnosticsource.8.0.0.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/system.diagnostics.eventlog/8.0.0/system.diagnostics.eventlog.8.0.0.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/system.io.hashing/9.0.10/system.io.hashing.9.0.10.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/system.io.pipelines/5.0.1/system.io.pipelines.5.0.1.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/system.text.encodings.web/8.0.0/system.text.encodings.web.8.0.0.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/system.text.json/8.0.0/system.text.json.8.0.0.nupkg.sha512"
+    "/home/jbmelberg/.nuget/packages/system.io.hashing/9.0.10/system.io.hashing.9.0.10.nupkg.sha512"
   ],
   "logs": []
 }

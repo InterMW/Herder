@@ -77,7 +77,7 @@ public class PlaneRepository : RedisRepository<PlaneContext>, IPlaneRepository
         {
             return new SkyFrame { Timestamp = time };
         }
-        return JsonSerializer.Deserialize<SkyFrame>(result) ;
+        return JsonSerializer.Deserialize<SkyFrame>((string)result) ;
     }
     public async Task SaveFrame(SkyFrame frame)
     {
@@ -96,7 +96,7 @@ public class PlaneRepository : RedisRepository<PlaneContext>, IPlaneRepository
         }
 
 
-        return JsonSerializer.Deserialize<Plane>(result!)!;
+        return JsonSerializer.Deserialize<Plane>((string)result!)!;
     }
 
     public async Task UpdatePlane(Plane plane)
@@ -132,7 +132,7 @@ public class PlaneRepository : RedisRepository<PlaneContext>, IPlaneRepository
             return new TimeAnotatedPlane() { HexValue = icao };
         }
 
-        return JsonSerializer.Deserialize<TimeAnotatedPlane>(result!) ?? new TimeAnotatedPlane() { HexValue = icao };
+        return JsonSerializer.Deserialize<TimeAnotatedPlane>((string)result!) ?? new TimeAnotatedPlane() { HexValue = icao };
     }
 
     private static string LastSeenPlaneKey(string icao) => $"last_seen_{icao}";

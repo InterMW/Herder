@@ -18,7 +18,9 @@ public class AppRegistrator : Registrator
 {
     public override void RegisterServices(IServiceCollection services)
     {
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
         var isDev = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+        Console.WriteLine(isDev);
         RabbitModule.RegisterMicroConsumer<PacketProcessor, PacketMessage>(services, false);
         RabbitModule.RegisterMicroConsumer<ClockProcessor, ClockMessage>(services, !isDev);
         RabbitModule.RegisterPublisher<WorkMessage>(services);
@@ -30,7 +32,6 @@ public class AppRegistrator : Registrator
         services.AddTransient<IPacketCoordindatorService, PacketCoordindatorService>();
         services.AddSingleton<IClock, Clock>();
         InfluxDBDependencyModule.LoadInfluxDBRepository<IPlaneMetadataRepository, PlaneFrameMetadataRepository, InfluxDBContext>(services);
-
 
         // Message Strategy
         services.AddSingleton<IMessageStrategy, Strategy00>();

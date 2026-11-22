@@ -16,7 +16,7 @@ public partial class PacketIngestorService(IPlaneRepository planeRepository, ICl
         var now = (long)(clock.GetUtcNow()-DateTime.UnixEpoch).TotalSeconds;
         var frameBytes = Enumerable
                 .Range(0,frame.Length/2)
-                .Select(_ => (byte)(byte.Parse(frame.Substring(2*_,2),System.Globalization.NumberStyles.HexNumber))).ToArray();
+                .Select(_ => byte.Parse(frame.Substring(2 * _, 2), System.Globalization.NumberStyles.HexNumber)).ToArray();
 
         await planeRepository.IncrementCountForMoment(serialNumber,now);
         var messageType = (byte) (frameBytes[0]>>3);
@@ -34,8 +34,8 @@ public partial class PacketIngestorService(IPlaneRepository planeRepository, ICl
             return;
         }
 
-        await planeRepository.RecordPacket(frame, icao, (long)now);
-        await planeRepository.MarkIcaoForMoment(icao,(long)now);
+        await planeRepository.RecordPacket(frame, icao, now);
+        await planeRepository.MarkIcaoForMoment(icao, now);
     }
 
     private async Task<string> ExtractIcao(byte messageType, string serialNumber, byte[] frameBytes)
@@ -113,6 +113,7 @@ public partial class PacketIngestorService(IPlaneRepository planeRepository, ICl
         }
         return string.Empty;
     }
+
     UInt32 modesSChecksum(string frame)
     {
         UInt32 crc = 0;
@@ -137,6 +138,7 @@ public partial class PacketIngestorService(IPlaneRepository planeRepository, ICl
         }
         return crc; /* 24 bit checksum. */
     }
+
     private static int decodeAC13Field(string frame)
     {
         byte m_bit = (byte)(GetByte(frame, 3) & 1 << 6);
@@ -175,6 +177,6 @@ public partial class PacketIngestorService(IPlaneRepository planeRepository, ICl
 
     private static byte GetByte(string frame, int num)
     {
-        return (byte)(byte.Parse(frame.Substring(2 * num)));
+        return byte.Parse(frame[(2 * num)..]);
     }
 }

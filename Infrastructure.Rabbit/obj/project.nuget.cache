@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "a2vezMPgegt4Cuwji8q7lQLka4z17PzS1/pTx8Wq0pqqoOikVaWpVehJYB103H3bAWFzXRNqRBRdVKYPSbkG/Q==",
+  "dgSpecHash": "tP2x2PXaZY8=",
   "success": true,
   "projectFilePath": "/home/jbmelberg/Git/Herder/Infrastructure.Rabbit/Infrastructure.Rabbit.csproj",
   "expectedPackageFiles": [
@@ -43,12 +43,7 @@
     "/home/jbmelberg/.nuget/packages/swashbuckle.aspnetcore.swagger/6.5.0/swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.5.0/swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",
     "/home/jbmelberg/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.5.0/swashbuckle.aspnetcore.swaggerui.6.5.0.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/system.diagnostics.diagnosticsource/8.0.0/system.diagnostics.diagnosticsource.8.0.0.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/system.diagnostics.eventlog/8.0.0/system.diagnostics.eventlog.8.0.0.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/system.memory/4.5.4/system.memory.4.5.4.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/system.text.encodings.web/8.0.0/system.text.encodings.web.8.0.0.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/system.text.json/8.0.0/system.text.json.8.0.0.nupkg.sha512",
-    "/home/jbmelberg/.nuget/packages/system.threading.channels/4.7.1/system.threading.channels.4.7.1.nupkg.sha512"
+    "/home/jbmelberg/.nuget/packages/system.diagnostics.eventlog/8.0.0/system.diagnostics.eventlog.8.0.0.nupkg.sha512"
   ],
   "logs": []
 }
